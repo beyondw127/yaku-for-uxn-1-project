@@ -1,0 +1,13 @@
+( ex10_hello-world.tal )
+ |0100 @main
+ ;hello_world ;vv STA2 
+ ;vv LDA2 LDA ,&xx STR
+ #1234 ,&yy STR2  
+ ,&yy LDR2 ;vv STA2
+ ;vv LDA2 NIP #18 DEO
+BRK
+ &xx $2 &yy $2  
+ @vv $2 
+ @hello_world 
+ "Hello,  20  "World!  00 
+ 

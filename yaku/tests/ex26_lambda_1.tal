@@ -1,0 +1,3 @@
+|0100
+#2a { #18 DEO JMP2r } STH2r JSR2 #2b18 DEO
+BRK

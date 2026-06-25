@@ -1,0 +1,21 @@
+|0100
+test_opt_across_empty_if 
+BRK
+
+@test_opt_across_empty_if
+  #08 #07 #08 #07 
+  #2a ROT ROT 
+  INC EQU 
+  OVR STH2 ROT ROT STH2r POP 
+  ?&if-true 
+  &if-false
+     MUL SWP 
+  !&end-if 
+  &if-true
+    MUL SWP
+  &end-if
+  #01 ROT ROT 
+  SUB 
+  MUL
+  #03 MUL #18 DEO #0a18 DEO 
+JMP2r

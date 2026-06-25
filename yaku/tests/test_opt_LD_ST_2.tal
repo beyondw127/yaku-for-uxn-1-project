@@ -1,0 +1,13 @@
+( Case 1. iterative )
+|0100
+#07 #02 #04 test_opt_LD_ST_2
+BRK
+
+@test_opt_LD_ST_2
+,&z STR ,&y STR ,&x STR
+,&x LDR ,&y LDR ,&z LDR ADD MUL ,&res STR
+,&res LDR
+JMP2r
+&x $1 &y $1 &z $1 &res $1
+
+

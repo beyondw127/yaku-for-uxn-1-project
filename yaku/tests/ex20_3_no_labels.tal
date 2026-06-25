@@ -1,0 +1,15 @@
+( This is an test case for loop )
+|0100 
+
+  ( #0015 )
+  #002a
+  ;f_1 JSR2
+  NIP
+  #18 DEO ( prints '*' )
+BRK
+ 
+@f_1
+    ( DUP2 ) 
+    DUP2 NIP POP
+    ( ADD2 )
+JMP2r

@@ -1,0 +1,95 @@
+( ==================================================== )
+( Functions for handling the allocation dictionary )
+
+@clear-allocation
+#0000 ;&i STA2
+&loop
+;&i LDA2 #0080 EQU2 ,&done JCN ( stop when the map is full ) ( alloc_sz* ptr* )
+    #0000 ;&i LDA2 ;allocated ADD2 STA2
+    #0000 ;&i LDA2 #0002 ADD2 ;allocated ADD2 STA2
+    ;&i LDA2 #0004 ADD2 ;&i STA2 
+,&loop JMP
+&done
+JMP2r
+&i $2
+
+@insert-ptr ( alloc_sz* ptr* -: bool )
+#0000 ;&i STA2 ( -- )
+&loop 
+    ;&i LDA2 #0080 EQU2 ,&full JCN ( stop when the map is full ) ( alloc_sz* ptr* )
+    ;&i LDA2 ;allocated ADD2 DUP2 LDA2 #0000 NEQ2 ,&cont JCN ( check if a slot in the map is free ) ( alloc_sz* ptr* allocated+i* )
+        DUP2 ( alloc_sz* ptr* allocated+i* allocated+i* )
+        ROT2 ROT2 ( alloc_sz* allocated+i* ptr* allocated+i* )
+        STA2 ( stores ptr* at allocated+i ) ( alloc_sz* allocated+i* )
+        #0002 ADD2 
+        STA2 ( stores alloc_sz* at allocated+i+2 ) ( -- )
+        ,&done JMP
+    &cont
+        POP2 ( alloc_sz* ptr* )
+    ;&i LDA2 #0004 ADD2 ;&i STA2 
+,&loop JMP
+&done
+#01 JMP2r
+&full
+POP2 POP2
+#00 JMP2r
+&i $2
+
+@exists-ptr ( ptr* -: bool )
+#0000 ;&i STA2 
+&loop 
+    ;&i LDA2 #0080 EQU2 ,&full JCN 
+    DUP2 ( ptr ptr )
+    ;&i LDA2 ;allocated ADD2 LDA2 
+    EQU2 ,&done JCN
+    ;&i LDA2 #0004 ADD2 ;&i STA2 
+,&loop JMP
+&done
+POP2
+#01 JMP2r
+&full
+POP2
+#00 JMP2r
+&i $2 
+
+@lookup-ptr ( ptr* -: alloc_sz* )
+#0000 ;&i STA2 
+&loop 
+    ;&i LDA2 #0080 EQU2 ,&full JCN 
+    DUP2 ( ptr ptr )
+    ;&i LDA2 ;allocated ADD2 DUP2 LDA2 ( ptr ptr allocated+i ptr_idx_LDA2 )
+    ROT2 EQU2 ,&done JCN ( ptr allocated+i )
+    POP2
+    ;&i LDA2 #0004 ADD2 ;&i STA2 
+,&loop JMP
+&done
+#0002 ADD2 LDA2 NIP2
+JMP2r
+&full
+#0000 
+JMP2r
+&i $2
+
+@delete-ptr ( ptr* -: bool )
+#0000 ;&i STA2 
+&loop 
+    ;&i LDA2 #0080 EQU2 ,&full JCN 
+    DUP2 ( ptr ptr )
+    ;&i LDA2 ;allocated ADD2 DUP2 LDA2 ROT2 EQU2 ,&done JCN ( allocated+i )
+    POP2
+    ;&i LDA2 #0004 ADD2 ;&i STA2 
+,&loop JMP
+&done
+DUP2 ( ptr allocated+i allocated+i )
+#0002 ADD2 ( ptr allocated+i allocated+i+2 )
+#0000 SWP2 STA2 ( ptr allocated+i )
+#0000 SWP2 STA2 ( ptr )
+POP2
+#01 JMP2r
+&full
+POP2
+#00 JMP2r
+&i $2
+
+@allocated $80 ( 32 tuples of the page idx and the alloc size )
+

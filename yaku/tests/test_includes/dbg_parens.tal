@@ -1,0 +1,9 @@
+@test-free
+{ 0013 "Test 20 "for 20 "free(ptr) 0a } STH2r print-str
+    reset
+    #0000 free
+    get-error #02 EQU print-Python-bool nl 
+
+JMP2r
+&ptr $2
+

@@ -1,0 +1,110 @@
+( ex20_1_rel_abs_labels.tal )
+ |0100
+ @main
+ #0004 #0003 #0002 #0001 ;f_2 JSR2 ,&r1 STR2
+ #0006 #0005 ,&r1 LDR2 ;f_5 JSR2 ,&r2 STR2
+ ,&r2 LDR2 ( 06 81 ) 
+ ADD
+ #02 DIV
+ ,&r3 STR
+ ,&r3 LDR
+
+ #18 DEO ( prints 'C' )
+ BRK
+ &r1 $2 &r2 $2 &r3 $2
+
+ @f_1 
+ ,&r3 STR2 ,&r2 STR2 ,&r1 STR2
+ ,&r2 LDR2 ,&r3 LDR2 MUL2 ,&r4 STR2
+ ,&r1 LDR2 ,&r4 LDR2 ;f_1_start JMP2
+ &r1 $2 &r2 $2 &r3 $2 &r4 $2
+
+|0200
+ @f_1_start 
+ ,&r2 STR2 ,&r1 STR2 
+ ,&r1 LDR2 ,&r2 LDR2 ADD2 ,&r3 STR2 
+ ,&r3 LDR2 ,&r3 LDR2  [ ,&r3 LDR2 NIP ]  ;f_1_start JCN2
+ ,&r3 LDR2 ,&r3 LDR2
+ MUL2 ,&r4 STR2
+ ,&r4 LDR2  [ ,&r4 LDR2 NIP ]  ;f_1_cont  JCN2
+ ,&r4 LDR2 INC2 ,&r5 STR2
+ ,&r5 LDR2 ;f_1_cont JMP2
+ &r1 $2 &r2 $2 &r3 $2 &r4 $2 &r5 $2
+
+ @f_1_cont 
+ ,&r4 STR2 ,&r3 STR2 ,&r2 STR2 ,&r1 STR2
+ ,&r3 LDR2 ,&r4 LDR2 ADD2 ,&r5 STR2
+ ,&r1 LDR2 ,&r2 LDR2 ,&r5 LDR2 ;f_3 JMP2
+ &r1 $2 &r2 $2 &r3 $2 &r4 1111 &r5 2b 2a
+
+ @f_2
+ ,&r4 STR2 ,&r3 STR2 ,&r2 STR2 ,&r1 STR2
+ ,&r3 LDR2 ,&r4 LDR2 ADD2 ,&r5 STR2
+ ,&r1 LDR2 ,&r2 LDR2 ,&r5 LDR2 ;f_1 JMP2
+ &r1 $2 &r2 $2 &r3 $2 &r4 $2 &r5 $2
+
+ @f_3
+ ,&r3 STR2 ,&r2 STR2 ,&r1 STR2
+ ,&r2 LDR2 ,&r3 LDR2 MUL2
+ ,&r4 STR2
+ ,&r1 LDR2 ,&r4 LDR2 ;f_4 JMP2
+ &r1 $2 &r2 $2 &r3 $2 &r4 $2
+
+ @l1
+ ,&r2 STR2 ,&r1 STR2
+ ,&r1 LDR2 ,&r2 LDR2 ADD2 ,&r3 STR2
+ ,&r3 LDR2
+ JMP2r
+ &r1 $2 &r2 $2 &r3 $2
+
+ @f_4
+ ,&r2 STR2 ,&r1 STR2
+ ,&r2 LDR2 INC2 ,&r3 STR2
+ ,&r3 LDR2 #0002 MUL2 ,&r4 STR2
+ ,&r1 LDR2 ,&r4 LDR2 ;l1 JMP2
+ &r1 $2 &r2 $2 &r3 $2 &r4 $2
+
+ @f_5
+ ,&r3 STR2 ,&r2 STR2 ,&r1 STR2
+ ,&r2 LDR2 ,&r3 LDR2 ADD2 ,&r4 STR2
+ ,&r4 LDR2 ,&r1 LDR2 DIV2 ,&r5 STR2
+ ,&r5 LDR2
+ JMP2r
+ &r1 $2 &r2 $2 &r3 $2 &r4 $2 &r5 $2
+
+ @f_6
+ ,&r2 STR2 ,&r1 STR2
+ ,&r1 LDR2 ,&r2 LDR2 ADD2 ,&r3 STR2
+  [ ,&r3 LDR2 NIP ]  ;l2 JCN2
+ #0003 ;l3 JMP2
+ &r1 $2 &r2 $2 &r3 $2
+
+ @l2
+ ,&r2 STR2 ,&r1 STR2
+ ,&r1 LDR2 ,&r2 LDR2 MUL2 ,&r3 STR2
+ ,&r3 LDR2 ;l4 JMP2
+ &r1 $2 &r2 $2 &r3 $2
+
+ @l3
+ ,&r2 STR2 ,&r1 STR2
+ ,&r1 LDR2 ,&r2 LDR2 DIV2 ,&r3 STR2
+ ,&r3 LDR2
+ JMP2r
+ &r1 $2 &r2 $2 &r3 $2
+
+ @l4
+
+ JMP2r
+
+ @f_7
+ 12
+ 34
+ 56
+ 78
+
+ @f_8
+ "Hello,
+ 20
+ "World
+
+

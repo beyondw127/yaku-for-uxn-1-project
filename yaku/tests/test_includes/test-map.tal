@@ -1,0 +1,132 @@
+( This is the suggested code skeleton for AE1
+  it also provides helper functions for printing
+)
+
+(
+ Dynamic memory allocation using pages and a bitmap
+)
+
+|0100
+map_show
+#0a18 DEO 
+map_fill
+#0a18 DEO 
+map_show
+#0a18 DEO 
+map_delete
+#0a18 DEO 
+map_show
+
+#0a18 DEO 
+map_exists
+#0a18 DEO
+map_lookup
+#0a18 DEO 
+BRK
+
+( define your integration tests here )
+
+@map_fill
+#0000 ;&i STA2
+&loop 
+    ;&i LDA2 #0020 EQU2 ,&done JCN
+    ;&i LDA2 INC2 DUP2 #0002 MUL2 SWP2 insertPtr POP ( #30 ADD #18 DEO nl )
+    ;&i LDA2 INC2 ;&i STA2 
+,&loop JMP
+&done
+JMP2r
+&i $2
+
+@map_delete
+#0000 ;&i STA2
+&loop 
+    ;&i LDA2 #0020 EQU2 ,&done JCN
+    ;&i LDA2 INC2 DUP2 print16-dec ws deletePtr #30 ADD #18 DEO nl
+    ;&i LDA2 INC2 INC2 ;&i STA2 
+,&loop JMP
+&done
+JMP2r
+&i $2
+
+@map_exists
+#0000 ;&i STA2
+&loop 
+    ;&i LDA2 #0020 EQU2 ,&done JCN
+    ;&i LDA2 INC2  DUP2 print16-dec ws existsPtr #30 ADD #18 DEO #2b18 nl 
+    ;&i LDA2 INC2 ;&i STA2 
+,&loop JMP
+&done
+JMP2r
+&i 0000
+
+@map_lookup
+#0000 ;&i STA2
+&loop 
+    ;&i LDA2 #0020 EQU2 ,&done JCN
+    ;&i LDA2 INC2 DUP2 print16-dec ws lookupPtr print16-dec nl
+    ;&i LDA2 INC2 ;&i STA2 
+,&loop JMP
+&done
+JMP2r
+&i 0000
+
+@map_show
+#0000 ;&i STA2
+&loop 
+    ;&i LDA2 #0020 EQU2 ,&done JCN
+    ;&i LDA2 print16-dec ws 
+    ;&i LDA2 #0004 MUL2 ;allocated ADD2 LDA2 print16-dec ws 
+    ;&i LDA2 #0004 MUL2 ;allocated ADD2 #0002 ADD2 LDA2 print16-dec nl
+    ;&i LDA2 INC2 ;&i STA2 
+,&loop JMP
+&done
+JMP2r
+&i $2
+
+
+
+
+( ==================================================== )
+( Functions for printing )
+@nl #0a18 DEO JMP2r
+@ws #2018 DEO JMP2r
+
+( To print a 2-byte unsigned integer 
+as a decimal number of 5 digits )
+( x:16 -> -- )
+( x* -: )
+@print16-dec
+    DUP2 ( x:16 x:16 )
+    DUP2 #2710 LTH2 ,&d2 JCN
+    ( T = x/10000 )
+    #2710 DIV2 ( x:16 T:16 ) DUP #30 ADD #18 DEO
+    ( Dt = x - 10000*T )
+    #2710 MUL2 SUB2 ( Dt )
+    DUP2 ( Dt Dt )
+    &d2
+    DUP2 #03e8  LTH2 ,&d3 JCN
+    ( D = Dt / 1000 )
+    #03e8 DIV2 ( Dt D ) DUP #30 ADD #18 DEO
+    ( ht = Dt-D*1000 )
+    #03e8 MUL2 SUB2  ( ht )
+    DUP2 ( ht ht )
+    &d3
+    DUP2 #0064  LTH2 ,&d4 JCN
+    ( h = ht /100 )
+    #0064 DIV2 ( ht h ) DUP #30 ADD #18 DEO
+    ( tt = ht - h*100 )
+    #0064 MUL2 SUB2 ( tt )
+    DUP2 ( tt tt )
+    &d4
+    ( t = tt / 10 )
+    #000a DIV2 ( tt t ) DUP #30 ADD #18 DEO
+    ( e = tt - 10*t )
+    #000a MUL2 SUB2 ( e ) #30 ADD #18 DEO POP
+    JMP2r
+
+
+( END of functions for printing and strings )
+( ==================================================== )
+
+
+~map.tal

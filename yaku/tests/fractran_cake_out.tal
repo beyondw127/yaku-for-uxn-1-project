@@ -1,0 +1,982 @@
+ |0000
+@System $2 $2 $1 $1 $2 $2 $2 $2 $1 
+&state
+ $1
+|0100
+ fractran_cake 
+BRK
+
+@fractran_cake_n_init_regs
+ #0005 JMP2r
+
+@fractran_cake_flour
+ #0001 JMP2r
+
+@fractran_cake_sugar
+ #0002 JMP2r
+
+@fractran_cake_apples
+ #0003 JMP2r
+
+@fractran_cake_apple_cake
+ #0006 JMP2r
+
+@fractran_cake_oranges
+ #0004 JMP2r
+
+@fractran_cake_cherries
+ #0005 JMP2r
+
+@fractran_cake_fruit_salad
+ #0007 JMP2r
+
+@fractran_cake_fruit_cake
+ #0008 JMP2r
+
+@fractran_cake_acc_init $6a
+@fractran_cake_p_init $3a
+@fractran_cake_i $2
+@fractran_cake
+ { #0000 SWP2
+ #10 SFT2
+ ;fractran_cake_acc_init ADD2
+ STA2
+ JMP2r
+ } STH2r
+ #0034 #0000 range-map-short { #0000 SWP2
+ #10 SFT2
+ ;fractran_cake_p_init ADD2
+ STA2
+ JMP2r
+ } STH2r
+ #001c #0000 range-map-short #0005 ;fractran_cake_acc_init STA2
+ #0001 ;fractran_cake_acc_init #0001 #10 SFT2
+ ADD2
+ STA2
+ #0001 ;fractran_cake_acc_init #0002 #10 SFT2
+ ADD2
+ STA2
+ #0002 ;fractran_cake_acc_init #0003 #10 SFT2
+ ADD2
+ STA2
+ #0001 ;fractran_cake_acc_init #0004 #10 SFT2
+ ADD2
+ STA2
+ #0001 ;fractran_cake_acc_init #0005 #10 SFT2
+ ADD2
+ STA2
+ { 0001 0006 0001 0003 0001 0001 0002 0001 0003 0001 0001 0007 0001 0003 0003 0001 0004 0001 0005 0001 0001 0008 0001 0002 0007 0001 0006 0001 ffff } STH2r
+ ;&x557058244828 STA2
+ { #10 SFT2
+ DUP2
+ LIT2
+ 
+&x557058244828
+ $2 ADD2
+ LDA2
+ SWP2
+ ;fractran_cake_p_init ADD2
+ STA2
+ JMP2r
+ } STH2r
+ #001c #0000 range-map-short ;fractran_cake_acc_init ;fractran_cake_p_init initFractranModel { 000f 49 6e 69 74 69 61 6c 20 73 74 61 74 65 3a 20 } STH2r
+ print-string #2018 DEO
+ #2018 DEO
+ ;fractran_cake_acc_init LDA2
+ INC2
+ #0001 OVR2
+ OVR2
+ SUB2
+ #fff7 GTH2
+ ?&l_e_fractran_cake_24 
+&l_fractran_cake_24
+ ;fractran_cake_i STA2
+ ;fractran_cake_acc_init ;fractran_cake_i LDA2
+ #10 SFT2
+ ADD2
+ LDA2
+ #0000 gt2 #00 EQU
+ ?&b25 ;fractran_cake_acc_init ;fractran_cake_i LDA2
+ #10 SFT2
+ ADD2
+ LDA2
+ print-int #20 print-char 
+&b25
+ ;fractran_cake_i LDA2
+ INC2
+ OVR2
+ OVR2
+ NEQ2
+ ?&l_fractran_cake_24 ;fractran_cake_i LDA2
+ INC2
+ ;fractran_cake_i STA2
+ 
+&l_e_fractran_cake_24
+ POP2
+ POP2
+ #0a18 DEO
+ runFractranModel { 000f 46 69 6e 61 6c 20 73 74 61 74 65 3a 20 20 20 } STH2r
+ print-string #2018 DEO
+ #2018 DEO
+ ;FractranModel_acc LDA2
+ INC2
+ #0001 OVR2
+ OVR2
+ SUB2
+ #fff7 GTH2
+ ?&l_e_fractran_cake_31 
+&l_fractran_cake_31
+ ;fractran_cake_i STA2
+ ;FractranModel_acc ;fractran_cake_i LDA2
+ #10 SFT2
+ ADD2
+ LDA2
+ #0000 gt2 #00 EQU
+ ?&b32 ;fractran_cake_i LDA2
+ print-int #3d print-char ;FractranModel_acc ;fractran_cake_i LDA2
+ #10 SFT2
+ ADD2
+ LDA2
+ print-int #20 print-char 
+&b32
+ ;fractran_cake_i LDA2
+ INC2
+ OVR2
+ OVR2
+ NEQ2
+ ?&l_fractran_cake_31 ;fractran_cake_i LDA2
+ INC2
+ ;fractran_cake_i STA2
+ 
+&l_e_fractran_cake_31
+ POP2
+ POP2
+ #0a18 DEO
+ POP2r
+ exit 
+BRK
+
+@initFractranModel_p_init $2
+@initFractranModel_acc_init $2
+@initFractranModel_pIdxs_init $40
+@initFractranModel_ii $2
+@initFractranModel_idx $2
+@initFractranModel_tIdx $2
+@initFractranModel_pIdx $2
+@initFractranModel_jj $2
+@initFractranModel_n_regs $2
+@initFractranModel
+ { #0000 SWP2
+ #10 SFT2
+ ;initFractranModel_pIdxs_init ADD2
+ STA2
+ JMP2r
+ } STH2r
+ #001f #0000 range-map-short ;initFractranModel_p_init STA2
+ ;initFractranModel_acc_init STA2
+ #007f INC2
+ #0000 OVR2
+ OVR2
+ SUB2
+ #fff7 GTH2
+ ?&l_e_initFractranModel_6 
+&l_initFractranModel_6
+ ;initFractranModel_ii STA2
+ #0000 ;FractranModel_acc ;initFractranModel_ii LDA2
+ #10 SFT2
+ ADD2
+ STA2
+ #0000 ;FractranModel_pIdxs ;initFractranModel_ii LDA2
+ #10 SFT2
+ ADD2
+ STA2
+ #0000 ;FractranModel_p ;initFractranModel_ii LDA2
+ #10 SFT2
+ ADD2
+ STA2
+ ;initFractranModel_ii LDA2
+ INC2
+ OVR2
+ OVR2
+ NEQ2
+ ?&l_initFractranModel_6 ;initFractranModel_ii LDA2
+ INC2
+ ;initFractranModel_ii STA2
+ 
+&l_e_initFractranModel_6
+ POP2
+ POP2
+ ;initFractranModel_acc_init LDA2
+ LDA2
+ INC2
+ #0000 OVR2
+ OVR2
+ SUB2
+ #fff7 GTH2
+ ?&l_e_initFractranModel_12 
+&l_initFractranModel_12
+ ;initFractranModel_ii STA2
+ ;initFractranModel_acc_init LDA2
+ ;initFractranModel_ii LDA2
+ #10 SFT2
+ ADD2
+ LDA2
+ ;FractranModel_acc ;initFractranModel_ii LDA2
+ #10 SFT2
+ ADD2
+ STA2
+ ;initFractranModel_ii LDA2
+ INC2
+ OVR2
+ OVR2
+ NEQ2
+ ?&l_initFractranModel_12 ;initFractranModel_ii LDA2
+ INC2
+ ;initFractranModel_ii STA2
+ 
+&l_e_initFractranModel_12
+ POP2
+ POP2
+ #0001 ;initFractranModel_idx STA2
+ #0001 ;initFractranModel_tIdx STA2
+ #0000 ;initFractranModel_pIdx STA2
+ { #0000 SWP2
+ ;initFractranModel_pIdxs_init ADD2
+ STA2
+ JMP2r
+ } STH2r
+ #001f #0000 range-map-short 
+&w_initFractranModel_19
+ ;initFractranModel_pIdx LDA2
+ #0001 ADD2
+ ;initFractranModel_pIdxs_init ;initFractranModel_tIdx LDA2
+ #10 SFT2
+ ADD2
+ STA2
+ ;initFractranModel_pIdxs_init LDA2
+ #0001 ADD2
+ ;initFractranModel_pIdxs_init STA2
+ ;initFractranModel_tIdx LDA2
+ #0001 ADD2
+ ;initFractranModel_tIdx STA2
+ ;initFractranModel_p_init LDA2
+ ;initFractranModel_idx LDA2
+ #0001 SUB2
+ #10 SFT2
+ ADD2
+ LDA2
+ ;initFractranModel_n_regs STA2
+ ;initFractranModel_n_regs LDA2
+ #0002 mul2 INC2
+ #0001 OVR2
+ OVR2
+ SUB2
+ #fff7 GTH2
+ ?&l_e_initFractranModel_24 
+&l_initFractranModel_24
+ ;initFractranModel_jj STA2
+ ;initFractranModel_p_init LDA2
+ ;initFractranModel_idx LDA2
+ ;initFractranModel_jj LDA2
+ ADD2
+ #0001 SUB2
+ #10 SFT2
+ ADD2
+ LDA2
+ ;FractranModel_p ;initFractranModel_pIdx LDA2
+ ;initFractranModel_jj LDA2
+ ADD2
+ #0001 SUB2
+ #10 SFT2
+ ADD2
+ STA2
+ ;initFractranModel_jj LDA2
+ INC2
+ OVR2
+ OVR2
+ NEQ2
+ ?&l_initFractranModel_24 ;initFractranModel_jj LDA2
+ INC2
+ ;initFractranModel_jj STA2
+ 
+&l_e_initFractranModel_24
+ POP2
+ POP2
+ ;initFractranModel_pIdx LDA2
+ ;initFractranModel_n_regs LDA2
+ #0002 mul2 ADD2
+ ;initFractranModel_pIdx STA2
+ ;initFractranModel_idx LDA2
+ #0002 ;initFractranModel_n_regs LDA2
+ mul2 ADD2
+ #0001 ADD2
+ ;initFractranModel_idx STA2
+ ;initFractranModel_p_init LDA2
+ ;initFractranModel_idx LDA2
+ #0001 SUB2
+ #10 SFT2
+ ADD2
+ LDA2
+ #ffff NEQ2
+ ?&w_initFractranModel_19 ;initFractranModel_pIdx LDA2
+ #0001 ADD2
+ ;initFractranModel_pIdxs_init ;initFractranModel_tIdx LDA2
+ #10 SFT2
+ ADD2
+ STA2
+ ;initFractranModel_pIdxs_init LDA2
+ #0002 div2 ;initFractranModel_pIdxs_init STA2
+ ;initFractranModel_pIdxs_init LDA2
+ #0001 ADD2
+ #0002 mul2 INC2
+ #0000 OVR2
+ OVR2
+ SUB2
+ #fff7 GTH2
+ ?&l_e_initFractranModel_32 
+&l_initFractranModel_32
+ ;initFractranModel_ii STA2
+ ;initFractranModel_pIdxs_init ;initFractranModel_ii LDA2
+ #10 SFT2
+ ADD2
+ LDA2
+ ;FractranModel_pIdxs ;initFractranModel_ii LDA2
+ #10 SFT2
+ ADD2
+ STA2
+ ;initFractranModel_ii LDA2
+ INC2
+ OVR2
+ OVR2
+ NEQ2
+ ?&l_initFractranModel_32 ;initFractranModel_ii LDA2
+ INC2
+ ;initFractranModel_ii STA2
+ 
+&l_e_initFractranModel_32
+ POP2
+ POP2
+ JMP2r
+
+@runFractranModel_j $2
+@runFractranModel_k $2
+@runFractranModel_acc_r $2
+@runFractranModel_n_k $2
+@runFractranModel_t_k $2
+@runFractranModel_n_v $2
+@runFractranModel_t_v $2
+@runFractranModel_start_t_j_idx $2
+@runFractranModel_end_t_j_idx $2
+@runFractranModel_start_n_j_idx $2
+@runFractranModel_end_n_j_idx $2
+@runFractranModel_cond
+ 01
+@runFractranModel
+ 
+&w_runFractranModel_8
+ ;FractranModel_pIdxs LDA2
+ INC2
+ #0001 OVR2
+ OVR2
+ SUB2
+ #fff7 GTH2
+ ?&runFractranModel_for_p_e 
+&runFractranModel_for_p
+ ;runFractranModel_j STA2
+ ;FractranModel_pIdxs #0002 ;runFractranModel_j LDA2
+ mul2 #0001 SUB2
+ #10 SFT2
+ ADD2
+ LDA2
+ ;runFractranModel_start_t_j_idx STA2
+ ;FractranModel_pIdxs #0002 ;runFractranModel_j LDA2
+ mul2 #10 SFT2
+ ADD2
+ LDA2
+ #0001 SUB2
+ ;runFractranModel_end_t_j_idx STA2
+ ;FractranModel_pIdxs #0002 ;runFractranModel_j LDA2
+ mul2 #10 SFT2
+ ADD2
+ LDA2
+ ;runFractranModel_start_n_j_idx STA2
+ ;FractranModel_pIdxs #0002 ;runFractranModel_j LDA2
+ mul2 INC2
+ #10 SFT2
+ ADD2
+ LDA2
+ #0001 SUB2
+ ;runFractranModel_end_n_j_idx STA2
+ #01 ;runFractranModel_cond STA
+ ;runFractranModel_end_n_j_idx LDA2
+ ;runFractranModel_start_n_j_idx LDA2
+ OVR2
+ OVR2
+ SUB2
+ #fff7 GTH2
+ ?&runFractranModel_for_n_e 
+&runFractranModel_for_n
+ ;runFractranModel_k STA2
+ ;FractranModel_p ;runFractranModel_k LDA2
+ #0001 SUB2
+ #10 SFT2
+ ADD2
+ LDA2
+ ;runFractranModel_n_k STA2
+ ;FractranModel_p ;runFractranModel_k LDA2
+ #10 SFT2
+ ADD2
+ LDA2
+ ;runFractranModel_n_v STA2
+ ;runFractranModel_n_k LDA2
+ ;FractranModel_p ;runFractranModel_start_t_j_idx LDA2
+ ;runFractranModel_end_t_j_idx LDA2
+ lookup ;runFractranModel_t_v STA2
+ ;FractranModel_acc ;runFractranModel_n_k LDA2
+ #10 SFT2
+ ADD2
+ LDA2
+ #0000 gt2 ;FractranModel_acc ;runFractranModel_n_k LDA2
+ #10 SFT2
+ ADD2
+ LDA2
+ ;runFractranModel_n_v LDA2
+ gte2 ;runFractranModel_t_v LDA2
+ ;runFractranModel_n_v LDA2
+ gte2 ORA
+ AND
+ not ?&b19 !&b19_e 
+&b19
+ #00 ;runFractranModel_cond STA
+ DUP2
+ !&runFractranModel_for_n_e !&c_e19 
+&b19_e
+ 
+&c_e19
+ ;runFractranModel_k LDA2
+ INC2
+ INC2
+ OVR2
+ OVR2
+ GTH2
+ ?&runFractranModel_for_n ;runFractranModel_k LDA2
+ INC2
+ INC2
+ ;runFractranModel_k STA2
+ 
+&runFractranModel_for_n_e
+ POP2
+ POP2
+ ;runFractranModel_cond LDA
+ ?&b24 !&b24_e 
+&b24
+ ;FractranModel_acc LDA2
+ INC2
+ #0001 OVR2
+ OVR2
+ SUB2
+ #fff7 GTH2
+ ?&runFractranModel_for_acc_e 
+&runFractranModel_for_acc
+ ;runFractranModel_acc_r STA2
+ ;runFractranModel_acc_r LDA2
+ ;FractranModel_p ;runFractranModel_start_t_j_idx LDA2
+ ;runFractranModel_end_t_j_idx LDA2
+ lookup ;runFractranModel_t_v STA2
+ ;runFractranModel_acc_r LDA2
+ ;FractranModel_p ;runFractranModel_start_n_j_idx LDA2
+ ;runFractranModel_end_n_j_idx LDA2
+ lookup ;runFractranModel_n_v STA2
+ ;runFractranModel_t_v LDA2
+ #0000 gt2 #00 EQU
+ ?&b28 ;FractranModel_acc ;runFractranModel_acc_r LDA2
+ #10 SFT2
+ ADD2
+ LDA2
+ ;runFractranModel_t_v LDA2
+ ADD2
+ ;FractranModel_acc ;runFractranModel_acc_r LDA2
+ #10 SFT2
+ ADD2
+ STA2
+ 
+&b28
+ ;runFractranModel_n_v LDA2
+ #0000 gt2 #00 EQU
+ ?&b29 ;FractranModel_acc ;runFractranModel_acc_r LDA2
+ #10 SFT2
+ ADD2
+ LDA2
+ ;runFractranModel_n_v LDA2
+ SUB2
+ ;FractranModel_acc ;runFractranModel_acc_r LDA2
+ #10 SFT2
+ ADD2
+ STA2
+ 
+&b29
+ ;runFractranModel_acc_r LDA2
+ INC2
+ OVR2
+ OVR2
+ NEQ2
+ ?&runFractranModel_for_acc ;runFractranModel_acc_r LDA2
+ INC2
+ ;runFractranModel_acc_r STA2
+ 
+&runFractranModel_for_acc_e
+ POP2
+ POP2
+ ;runFractranModel_end_t_j_idx LDA2
+ ;runFractranModel_start_t_j_idx LDA2
+ OVR2
+ OVR2
+ SUB2
+ #fff7 GTH2
+ ?&runFractranModel_for_t_e 
+&runFractranModel_for_t
+ ;runFractranModel_k STA2
+ ;FractranModel_p ;runFractranModel_k LDA2
+ #0001 SUB2
+ #10 SFT2
+ ADD2
+ LDA2
+ ;runFractranModel_t_k STA2
+ ;FractranModel_p ;runFractranModel_k LDA2
+ #10 SFT2
+ ADD2
+ LDA2
+ ;runFractranModel_t_v STA2
+ ;FractranModel_acc ;runFractranModel_t_k LDA2
+ #10 SFT2
+ ADD2
+ LDA2
+ #0000 EQU2
+ ?&b34 !&b34_e 
+&b34
+ ;runFractranModel_t_v LDA2
+ ;FractranModel_acc ;runFractranModel_t_k LDA2
+ #10 SFT2
+ ADD2
+ STA2
+ ;runFractranModel_t_k LDA2
+ ;FractranModel_acc STA2
+ !&c_e34 
+&b34_e
+ 
+&c_e34
+ ;runFractranModel_k LDA2
+ INC2
+ INC2
+ OVR2
+ OVR2
+ GTH2
+ ?&runFractranModel_for_t ;runFractranModel_k LDA2
+ INC2
+ INC2
+ ;runFractranModel_k STA2
+ 
+&runFractranModel_for_t_e
+ POP2
+ POP2
+ DUP2
+ !&runFractranModel_for_p_e !&c_e24 
+&b24_e
+ 
+&c_e24
+ ;runFractranModel_j LDA2
+ INC2
+ OVR2
+ OVR2
+ NEQ2
+ ?&runFractranModel_for_p ;runFractranModel_j LDA2
+ INC2
+ ;runFractranModel_j STA2
+ 
+&runFractranModel_for_p_e
+ POP2
+ POP2
+ ;runFractranModel_cond LDA
+ ?&w_runFractranModel_8 JMP2r
+
+@lookup_v $2
+@lookup_e $2
+@lookup_b $2
+@lookup_pp $2
+@lookup_k $2
+@lookup_i $2
+@lookup
+ ;lookup_e STA2
+ ;lookup_b STA2
+ ;lookup_pp STA2
+ ;lookup_k STA2
+ #0000 ;lookup_v STA2
+ ;lookup_e LDA2
+ ;lookup_b LDA2
+ OVR2
+ OVR2
+ SUB2
+ #fff7 GTH2
+ ?&lookup_for_k_e 
+&lookup_for_k
+ ;lookup_i STA2
+ ;lookup_pp LDA2
+ ;lookup_i LDA2
+ #0001 SUB2
+ #10 SFT2
+ ADD2
+ LDA2
+ ;lookup_k LDA2
+ EQU2
+ ?&b6 !&b6_e 
+&b6
+ ;lookup_pp LDA2
+ ;lookup_i LDA2
+ #10 SFT2
+ ADD2
+ LDA2
+ ;lookup_v STA2
+ DUP2
+ !&lookup_for_k_e !&c_e6 
+&b6_e
+ 
+&c_e6
+ ;lookup_i LDA2
+ INC2
+ INC2
+ OVR2
+ OVR2
+ GTH2
+ ?&lookup_for_k ;lookup_i LDA2
+ INC2
+ INC2
+ ;lookup_i STA2
+ 
+&lookup_for_k_e
+ POP2
+ POP2
+ ;lookup_v LDA2
+ JMP2r
+
+@div2
+ OVR2
+ OVR2
+ #8000 LTH2
+ STH
+ #8000 LTH2
+ STH
+ ANDrk
+ STHr
+ ?&pp ORArk
+ STHr
+ #01 SWP
+ SUB
+ ?&mm STH2r
+ #01 SWP
+ SUB
+ AND
+ ?&mp !&pm 
+&mp
+ SWP2
+ neg2 SWP2
+ DIV2
+ !neg2 
+&pm
+ neg2 DIV2
+ !neg2 
+&mm
+ neg2 SWP2
+ neg2 SWP2
+ 
+&pp
+ DIV2
+ POP2r
+ JMP2r
+
+@exit
+ ( POP2 )
+ #80 .System/state DEO
+ POP2r
+ 
+BRK
+
+@fmt-dec-short
+ DUP2
+ n-dec-digits-in-short DUP
+ #01 EQU
+ ?&done ,&n-dig STR
+ #01 
+&loop
+ ROT
+ ROT
+ DUP2
+ #000a DIV2
+ DUP2
+ #000a MUL2
+ ROT2
+ SWP2
+ SUB2
+ NIP
+ #30 ADD
+ ROT
+ ROT
+ SWP2
+ SWP
+ SWP2
+ ROT
+ INC
+ DUP
+ LIT
+ 
+&n-dig
+ $1 LTH
+ ?&loop 
+&done
+ ROT
+ ROT
+ NIP
+ #30 ADD
+ SWP
+ JMP2r
+
+@gt2
+ GTH2k
+ STH
+ OVR2
+ OVR2
+ #8000 LTH2
+ STH
+ ANDr
+ #8000 LTH2
+ STHr
+ AND
+ ?&pop GTH2k
+ STH
+ OVR2
+ OVR2
+ #7fff GTH2
+ STH
+ ANDr
+ #7fff GTH2
+ STHr
+ AND
+ ?&pop #7fff GTH2
+ ROT
+ ROT
+ #8000 LTH2
+ AND
+ ?&true #00 JMP2r
+ 
+&pop
+ POP2
+ POP2
+ 
+&true
+ #01 JMP2r
+
+@gte2
+ lt2 #01 SWP
+ SUB
+ JMP2r
+
+@lt2
+ LTH2k
+ STH
+ OVR2
+ OVR2
+ #8000 LTH2
+ STH
+ ANDr
+ #8000 LTH2
+ STHr
+ AND
+ ?&pop LTH2k
+ STH
+ OVR2
+ OVR2
+ #7fff GTH2
+ STH
+ ANDr
+ #7fff GTH2
+ STHr
+ AND
+ ?&pop #8000 LTH2
+ ROT
+ ROT
+ #7fff GTH2
+ AND
+ ?&true #00 JMP2r
+ 
+&pop
+ POP2
+ POP2
+ 
+&true
+ #01 JMP2r
+
+@mul2
+ OVR2
+ OVR2
+ #8000 LTH2
+ STH
+ #8000 LTH2
+ STH
+ ANDrk
+ STHr
+ ?&pp ORArk
+ STHr
+ #01 SWP
+ SUB
+ ?&mm STH2r
+ #01 SWP
+ SUB
+ AND
+ ?&mp !&pm 
+&mp
+ SWP2
+ 
+&pm
+ neg2 MUL2
+ !neg2 
+&mm
+ neg2 neg2 
+&pp
+ MUL2
+ POP2r
+ JMP2r
+
+@n-dec-digits-in-short
+ DUP2
+ #0000 EQU2
+ ?&is_zero #2710 #0005 
+&loop
+ ROT2
+ ROT2
+ DIV2k
+ #0000 NEQ2
+ ?&done_loop #000a DIV2
+ ROT2
+ #0001 SUB2
+ !&loop 
+&is_zero
+ #01 JMP2r
+ 
+&done_loop
+ POP2
+ POP2
+ NIP
+ JMP2r
+
+@neg2
+ #0000 SWP2
+ SUB2
+ JMP2r
+
+@not
+ #01 SWP
+ SUB
+ JMP2r
+
+@print-char
+ #18 DEO
+ JMP2r
+
+@print-int
+ DUP2
+ #0000 EQU2
+ ?&zero fmt-dec-short { #18 DEO
+ JMP2r
+ } STH2r
+ !proc-n-items-from-ws 
+&zero
+ POP2
+ #3018 DEO
+ JMP2r
+
+@print-string
+ #18 !write-string
+@proc-n-items-from-ws
+ ROT
+ STHk
+ 
+&loop
+ #00 EQU
+ ?&end STH2k
+ JSR2
+ STH2r
+ STHr
+ #01 SUB
+ STHk
+ !&loop 
+&end
+ POPr
+ POP2
+ JMP2r
+
+@range-map-short
+ DUP2
+ #0f SFT2
+ NIP
+ ?&exit OVR2
+ #0f SFT2
+ NIP
+ ?&exit OVR2
+ OVR2
+ SUB2
+ #0f SFT2
+ NIP
+ ?&exit 
+&loop
+ EQU2k
+ ?&done ROT2k
+ JSR2
+ POP2
+ INC2
+ !&loop 
+&done
+ NIP2
+ SWP2
+ JMP2
+ 
+&exit
+ POP2
+ POP2
+ POP2
+ JMP2r
+
+@update-len
+ LDA2k
+ ROT2
+ ADD2
+ SWP2
+ STA2
+ JMP2r
+
+@write-string
+ STH
+ DUP2
+ LDA2
+ SWP2
+ INC2
+ INC2
+ DUP2
+ ROT2
+ ADD2
+ SWP2
+ 
+&l
+ LDAk
+ STHrk
+ DEO
+ INC2
+ GTH2k
+ ?&l POP2
+ POP2
+ POPr
+ JMP2r
+
+@totalMemUsage
+ 0300
+@FractranModel_acc $100
+@FractranModel_pIdxs $100
+@FractranModel_p $100

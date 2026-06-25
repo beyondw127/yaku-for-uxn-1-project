@@ -1,0 +1,40 @@
+|0100
+test_opt_across_empty_if
+BRK
+
+@test_opt_across_empty_if
+    #08 #07 #08 #07
+    #2a ;&x STA
+    ( start IF )
+    #01 ADD EQU 
+    ?&if-true
+    &if-false
+        SWP
+        MUL ( 56 )
+    !&end-if
+    ( ,&end-if JMP )
+    &if-true 
+        MUL ( 56 )
+        INC #01 SUB
+        DUP
+        #48 EQU ?&if-true2
+        &if-false2
+            #2c18 DEO
+        !&end-if2
+        ( ,&end-if JMP )
+        &if-true2 
+            #2b18 DEO        
+        !&end-if2
+        &end-if2
+
+    !&end-if
+    &end-if
+    #01
+    SWP
+    ( end IF )
+    ;&x LDA ( 42 )
+    SUB ( 56-42 = 14 )
+    MUL
+    #03 MUL #18 DEO #0a18 DEO
+JMP2r
+&x $1

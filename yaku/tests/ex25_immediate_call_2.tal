@@ -1,0 +1,13 @@
+|0100
+test
+#2b18 DEO
+BRK
+
+@test
+  #2a18 DEO
+  ;test2 JSR2
+JMP2r
+
+@test2
+  #2a18 DEO
+JMP2r

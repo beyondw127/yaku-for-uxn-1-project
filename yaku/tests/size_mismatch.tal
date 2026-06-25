@@ -1,0 +1,5 @@
+|0100
+;x LDA ;y LDA2 MUL
+BRK
+@x $2
+@y $2

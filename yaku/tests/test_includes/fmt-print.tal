@@ -1,0 +1,370 @@
+( A library of functions fmt-* to format numbers as strings
+The result is put on the WS. 
+The functions print-* and memwrite-* 
+use helpers proc-n-items-from-ws* 
+to take the string from the stack
+
+requires range-map-fold-lib.tal for range-map-short
+
+)
+
+BRK
+
+( unsigned decimal number of up to 5 digits )
+( so these digits are reversed on the stack )
+( this is the order to print them )
+( x:16 -> d[0] .. d[4] #05  )
+@fmt-dec-short
+    DUP2 n-dec-digits-in-short ( x:16 n-dig:8 )
+    DUP #01 EQU ?&done ( only one digit => done )
+    ,&n-dig STR ( more than one, store it in n-dig )
+    #01 ( x:16 1:8 ) ( d[0] xd10 2 )
+    &loop
+    ROT ROT ( 1 x ) ( d[0] 2 xd10 )
+    DUP2 ( ct:8 x:16 x:16 ) ( 1 x x ) ( d[0] 2 xd10 xd10 )
+    #000a DIV2 DUP2 ( ct:8 x:16 xd10:16 xd10:16 )
+    #000a MUL2 ( ct:8 x:16 xd10:16 xr:16 )
+    ROT2 SWP2 ( ct:8 xd10:16 x:16 xr:16 )
+    SUB2 ( ct:8 xd10:16 d[0]:16 )
+    NIP #30 ADD ( ct:8 xd10:16 dl[0]:8 ) ( 1 xd d[0] ) ( d[0] 2 xd100 d[1] )
+    ( we need d[0] ct:8 )
+    ROT ROT ( ct:8 dl[0]:8 xd10:16 ) ( d[0] 2 d[1] xd100  )
+    SWP2 SWP SWP2 ( dl[0]:8 ct:8 xd10:16 ) ( d[0] d[1] 2 xd100  )
+    ROT INC DUP  ( dl[0]:8 xd10:16 ct:8+1  )
+    ( if ct<5 jump )
+    ( #05  )
+    LIT &n-dig $1 
+    LTH ?&loop ( dl[0]:8 xd10:16 2:8 )
+    &done
+    ROT ROT NIP #30 ADD SWP
+JMP2r
+
+( unsigned decimal number of up to 3 digits )
+( so these digits are reversed on the stack )
+( this is the order to print them )
+( x:8 -> d[0] d[1] d[2] #03  )
+@fmt-dec-byte
+    #00 SWP fmt-dec-short
+JMP2r
+
+@fmt-hex-byte
+    #00 SWP ( 00 x = x:16 )
+    #01 ( x:16 1:8 )
+    &loop
+    ROT ROT ( 1 x:16 ) ( d[0] 2 xd10 )
+    DUP2 ( ct:8 x:16 x:16 ) ( 1 x x ) ( d[0] 2 xd10 xd10 )
+    #0010 DIV2 DUP2 ( ct:8 x:16 xd10:16 xd10:16 )
+    #0010 MUL2 ( ct:8 x:16 xd10:16 xr:16 )
+    ROT2 SWP2 ( ct:8 xd10:16 x:16 xr:16 )
+    SUB2 ( ct:8 xd10:16 d[0]:16 )
+    NIP h2a ( ct:8 xd10:16 d[0]:8 ) ( 1 xd d[0] ) ( d[0] 2 xd100 d[1] )
+    ( we need d[0] ct:8 )
+    ROT ROT ( ct:8 d[0]:8 xd10:16 ) ( d[0] 2 d[1] xd100  )
+    SWP2 SWP SWP2 ( d[0]:8 ct:8 xd10:16 ) ( d[0] d[1] 2 xd100  )
+    ROT INC DUP  ( d[0]:8 xd10:16 ct:8+1  )
+    ( if ct<4    jump )
+    #02 LTH ?&loop ( d[0] xd10 2 )
+    ROT ROT NIP h2a SWP
+JMP2r
+
+@fmt-hex-byte-BAD
+    #01 ( x 1 )
+    &loop
+    SWP ( 1 x ) ( d[0] 2 xd10 )
+    DUP ( ct:8 x:8 x:8 ) ( 1 x x ) ( d[0] 2 xd10 xd10 )
+    #10 DIV DUP ( ct:8 x:8 xd10:8 xd10:8 )
+    #10 MUL ( ct:8 x:8 xd10:8 xr:8 )
+    ROT SWP ( ct:8 xd10:8 x:8 xr:8 )
+    SUB ( ct:8 xd10:8 d[0]:8 )
+    h2a ( ct:8 xd10:8 da[0]:8 ) ( 1 xd d[0] ) ( d[0] 2 xd100 d[1] )
+    ( we need d[0] ct:8 )
+    ROT ROT ( da[0]:8 ct:8 xd10:8 ) ( d[0] 2 d[1] xd100  )
+    INC DUP  ( da[0]:8 xd10:8 ct:8+1 ct+1 )
+    ( if ct<4    jump )
+    #02 LTH ?&loop ( da[0] xd10 2 )
+    ROT ROT NIP h2a SWP
+JMP2r
+
+( print a 2-byte "short" word as hex )
+@fmt-hex-short
+    ( b1 b2 )
+    fmt-hex-byte ( b1 a22 a21 #02 )
+    POP ROT ( a22 a21 b1 )
+    fmt-hex-byte ( a22 a21 a12 a11 #02 )
+    #02 ADD
+    JMP2r
+
+( assumes n items on WS, followed by n:8, then a pointer to proc )
+( proc takes a value and an iterator: v:sz i:8 proc:16 )
+@proc-n-items-from-ws-with-iter
+    ( x_1 ... x_n n ;proc* )
+    ROT ( x_1 ... x_n n ;proc* n )
+    ,&n STR #00 ROT ROT
+    #00 STHk ( x_1 ... x_n n ;proc* 0 | 0 )
+    &loop
+        LIT &n $1 EQU ?&end ( x_1 ... x_n n ;proc* | n )
+        STH2k ( x_1 ... x_n n ;proc* | n ;proc* )
+        JSR2 ( x_1 ... x_n-1 | n ;proc* )
+        STH2r ( x_1 ... x_n-1 ;proc* | n )
+        STHr #01 ADD STHk ( x_1 ... x_n-1 ;proc* n-1 | n-1 )
+        ROT ROT OVR2 NIP ( x_1 ... x_n-1 n-1 ;proc* n-1 | n-1 )
+    !&loop
+    &end
+    POPr ( removes the n from the RST )
+    POP2 ( removes ;proc* from the WST )
+    POP ( removes n from the WST; is this correct? )
+JMP2r
+
+( x_1 ... x_n n ;proc* )
+( proc should not return anything on the WS )
+@proc-n-items-from-ws
+    ROT STHk ( x_1 ... x_n ;proc* n | n )
+    &loop
+        #00 EQU ?&end ( x_1 ... x_n ;proc* | n )
+        STH2k ( x_1 ... x_n ;proc* | n ;proc* )
+        JSR2 ( x_1 ... x_n-1 | n ;proc* )
+        STH2r ( x_1 ... x_n-1 ;proc* | n )
+        STHr #01 SUB STHk ( x_1 ... x_n-1 ;proc* n-1 | n-1 )
+    !&loop
+    &end
+    POPr
+    POP2
+JMP2r
+
+@print-int
+DUP2 #0000 EQU2 ?&zero
+fmt-dec-short
+{ #18 DEO JMP2r } STH2r !proc-n-items-from-ws
+&zero
+POP2 #3018 DEO JMP2r
+
+@print-int-stderr
+DUP2 #0000 EQU2 ?&zero
+fmt-dec-short { #19 DEO JMP2r } STH2r !proc-n-items-from-ws
+&zero
+POP2 #3019 DEO JMP2r
+
+@print-hex
+fmt-hex-short { #18 DEO JMP2r } STH2r !proc-n-items-from-ws
+
+@print-hex-2
+#02 SUB
+fmt-hex-short { #18 DEO JMP2r } STH2r proc-n-items-from-ws 
+( we only retain 2 characters, so we should remove 2 bytes )
+( a b c d NIP2 )
+NIP2 JMP2r
+
+@print-hex-3
+fmt-hex-short { #18 DEO JMP2r } STH2r proc-n-items-from-ws
+( a b c d SWP2 NIP ROT ROT )
+SWP2 NIP ROT ROT JMP2r
+
+@print-hex-1
+fmt-hex-short { #18 DEO JMP2r } STH2r proc-n-items-from-ws
+NIP2 NIP JMP2r
+
+@print-hex-stderr
+fmt-hex-short { #19 DEO JMP2r } STH2r !proc-n-items-from-ws
+
+( take b and write to addr + i where addr is the start of the byte string, so str+2 )
+( b:8 i:8 addr:16 -- )
+@write-byte-to-string-at-addr
+    ROT #00 SWP ( v:8 addr:16 i:16 )
+    ADD2 #0002 ADD2
+    STA ( stores v at addr+i ; addr+i=v:8 )
+JMP2r
+
+( take b and write to addr + i where addr is the start of the byte string, so str+2 )
+( b:8 i:8 addr:16 -- )
+@write-byte-to-mem-at-addr
+    ROT #00 SWP ( v:8 addr:16 i:16 )
+    ADD2
+    STA ( stores v at addr+i ; addr+i=v:8 )
+JMP2r
+
+( n* addr* memwrite-int -- )
+( n will always be 2 bytes )
+@memwrite-int
+    ,&str-addr STR2
+    DUP2 #0000 EQU2 ?&zero
+    fmt-dec-short
+    { LIT2 &str-addr $2 write-byte-to-mem-at-addr JMP2r } STH2r
+    proc-n-items-from-ws-with-iter
+JMP2r
+&zero 
+#00 ,&str-addr LDR2 STA 
+JMP2r
+
+( n addr memwrite-hex )
+( n will always be 2 bytes )
+@memwrite-hex
+    ,&str-addr STR2
+    fmt-hex-short
+    { LIT2 &str-addr $2 write-byte-to-mem-at-addr JMP2r } STH2r
+    proc-n-items-from-ws-with-iter
+JMP2r
+
+( n addr memwrite-hex )
+( n will always be 2 bytes )
+@memwrite-hex-1
+    ,&str-addr STR2
+    fmt-hex-short POP2 POP #01
+    { LIT2 &str-addr $2 write-byte-to-mem-at-addr JMP2r } STH2r
+    proc-n-items-from-ws-with-iter
+JMP2r
+( n addr memwrite-hex )
+( n will always be 2 bytes )
+@memwrite-hex-2
+    ,&str-addr STR2
+    fmt-hex-short POP POP POP #02
+    { LIT2 &str-addr $2 write-byte-to-mem-at-addr JMP2r } STH2r
+    proc-n-items-from-ws-with-iter
+JMP2r
+( n addr memwrite-hex )
+( n will always be 2 bytes )
+@memwrite-hex-3
+    ,&str-addr STR2
+    fmt-hex-short  POP POP #03
+    { LIT2 &str-addr $2 write-byte-to-mem-at-addr JMP2r } STH2r
+    proc-n-items-from-ws-with-iter
+JMP2r
+
+( c:8 addr:16 memwrite-char )
+@memwrite-char
+STA JMP2r
+
+( n* addr* strwrite-int -- 0004 )
+@strwrite-int
+#0002 ADD2 memwrite-int
+#0004 ( so the int is max 4 characters, that seems to assume it's hex )
+JMP2r 
+
+( n addr strwrite-hex )
+@strwrite-hex
+#0002 ADD2 memwrite-hex
+#0004
+JMP2r
+
+@strwrite-hex-1
+#0002 ADD2 !memwrite-hex-1
+#0001
+JMP2r
+@strwrite-hex-2
+#0002 ADD2 memwrite-hex-2
+#0002
+JMP2r
+
+@strwrite-hex-3
+#0002 ADD2 memwrite-hex-3
+#0003
+JMP2r
+
+
+( n addr strwrite-char )
+@strwrite-char
+#0002 ADD2 memwrite-char
+#0001 JMP2r
+
+( n addr strwrite-char )
+@strwrite-bool
+?&true
+#66 #0002 ADD2 memwrite-char
+&true
+#74 #0002 ADD2 memwrite-char
+#0001 JMP2r
+
+@print-char
+    #18 DEO JMP2r
+@print-char-stderr
+    #19 DEO JMP2r
+
+( a bool is a byte; prints `t` or `f` )
+@print-bool
+?&true
+#6618 DEO JMP2r
+&true
+#7418 DEO JMP2r
+
+( a bool is a byte; prints `t` or `f` )
+@print-bool-stderr
+?&true
+#6619 DEO JMP2r
+&true
+#7419 DEO JMP2r
+
+( x:8 -- +/- )
+@sign-byte
+#07 SFT #02 MUL #2b ADD JMP2r
+
+( x:16 -- +/- )
+@sign-short
+#0f SFT2 NIP #02 MUL #2b ADD JMP2r
+
+( x:8 -- |x:8| )
+@abs-byte 
+DUP #07 SFT ?&neg
+JMP2r
+&neg
+#ff SWP SUB INC JMP2r
+
+( x:16 -- |x:16| )
+@abs-short
+DUP2 #0f SFT2 NIP ?&neg
+JMP2r
+&neg
+#ffff SWP2 SUB2 INC2 JMP2r
+
+@print-signed-short
+DUP2 sign-short #18 DEO abs-short !print-int
+
+@print-signed-byte
+DUP2 sign-byte #18 DEO abs-byte #00 SWP !print-int
+    
+( if <10 then 30 else 57 )
+( implemented as (a<10)*0x30+(a>=10)*0x57 )
+( h:8 -- a:8 )
+@h2a
+    DUP ( h h )
+    #0a LTH ( h (h<10) )
+    DUP ( h (h<10) )
+    #01 SWP SUB ( h (h<10) 1-(h<10) )
+    #57 MUL ( h (h<10) (1-(h<10))*0x57 )
+    SWP ( h (1-(h<10))*0x57 (h<10) )
+    #30 MUL ( h (1-(h<10))*0x57 (h<10)*0x30 )
+    ADD ( h (1-(h<10))*0x57 + (h<10)*0x30 )
+    ADD ( h+(1-(h<10))*0x57 + (h<10)*0x30 )
+    JMP2r
+
+( 
+we divide by 10,000
+if the result is 1, we know we need 5 digits.
+else, we divide by 1,000.
+if 1, we need 4 digits, etc.
+)
+( x:16 -- n:8 )
+@n-dec-digits-in-short
+    DUP2 #0000 EQU2 ?&is_zero 
+    #2710 #0005 ( x:16 d:16 n:16 )
+    &loop
+    ROT2 ROT2 ( n:16 x:16 d:16 )
+    DIV2k ( n:16 x:16 d:16 x/d:16 ) 
+    #0000 NEQ2 ?&done_loop ( n:16 x:16 d:16 )
+        #000a DIV2 ( n:16 x:16 d/10:16  )
+        ROT2 #0001 SUB2 ( x:16 d/10:16 n-1:16 )
+        !&loop
+    &is_zero
+        #01
+        JMP2r
+    &done_loop
+        POP2 POP2 NIP ( n:8 )
+JMP2r
+
+( Adds substr-len to len stored at addr )
+( substr-len* addr* )
+@update-len
+LDA2k ( substr-len* addr* len* )
+ROT2 ( addr* len* substr-len* )
+ADD2 ( addr* len*+substr-len* )
+SWP2 ( len*+substr-len* addr* )
+STA2 ( -- )
+JMP2r

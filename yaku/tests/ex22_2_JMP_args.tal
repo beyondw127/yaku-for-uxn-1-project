@@ -1,0 +1,14 @@
+
+|0100
+
+#0006 #0007 ;f_1 JSR2 
+POP2
+NIP #18 DEO ( '*' )
+BRK
+
+@f_1
+    ;f_2 JMP2
+
+@f_2
+    MUL2 DUP2
+    JMP2r

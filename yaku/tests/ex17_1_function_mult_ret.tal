@@ -1,0 +1,17 @@
+( This is an test case to debug the ordering of the registers in case of keep )
+
+( Label name is hex number: f1
+Invalid label: @f1 )
+
+|0100 @main
+
+#0005 ;f_1 JSR2 ( so returns args and sum )
+ADD2 ADD2 ( should be 15 i.e. f )
+NIP
+#37 ADD #18 DEO 
+BRK
+
+@f_1 
+    DUP2 DUP2 
+    JMP2r
+

@@ -1,0 +1,38 @@
+|0100
+simple-loop
+BRK
+
+@simple-loop
+
+#00 ,&i STR
+#00 ,&n STR
+&loop1
+,&i LDR #20 ADD #18 DEO
+,&i LDR #08 EQU ,&done1 JCN
+,&n LDR ,&i LDR ADD ,&n STR
+,&i LDR INC ,&i STR
+,&loop1 JMP
+&done1
+,&i LDR
+#00 MUL ,&i STR
+&loop2
+,&i LDR #20 ADD #18 DEO
+,&i LDR INC ,&i STR
+,&i LDR #08 LTH ,&loop2 JCN
+&done2
+,&i LDR
+
+#0008 #0000
+( OVR2 OVR2 SUB2 #fff7 GTH2 ?&l_e_30 )
+&l_30
+;&ii STA2
+;&ii LDA2 NIP #20 ADD #18 DEO
+;&ii LDA2 INC2 OVR2 OVR2 NEQ2 ?&l_30
+;&ii LDA2 INC2 ;&ii STA2
+&l_e_30 POP2 POP2
+
+
+JMP2r
+&i $1 &n $1
+&ii $2
+

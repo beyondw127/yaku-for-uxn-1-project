@@ -1,0 +1,18 @@
+( This is an test case for loop )
+|0100 
+
+  #0003
+  #0002
+  #0001
+   ;f_1 JSR2 POP #07 MUL
+#18 DEO ( prints 'F' )
+BRK
+ 
+@f_1
+    MUL2 
+    &start
+    ADD2 
+    DUP2 DUP2 NIP 
+    ,&start JCN
+    ADD2 
+JMP2r

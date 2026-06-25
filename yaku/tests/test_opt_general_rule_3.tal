@@ -1,0 +1,17 @@
+( test_comm_binop_1 )
+|0100
+#07 #04 test_comm_binop_1 #18 DEO
+BRK
+@test_comm_binop_1
+,&x STR ,&y STR  
+,&x LDR 
+#02 
+SWP
+ADD
+,&y LDR 
+SWP
+MUL
+,&res STR ,&res LDR
+JMP2r
+&x $1 &y $1 &res $1
+

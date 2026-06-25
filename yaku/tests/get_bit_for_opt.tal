@@ -1,0 +1,38 @@
+|0000
+@error $1
+|0100
+#0000 get_bit #30 ADD #18 DEO #0a18 DEO
+BRK
+(
+def get_bit(idx) :
+    global bitmap, error
+    byte_idx = idx >> 3
+    bit_idx = 7 - (idx - (byte_idx<<3))
+    if byte_idx > N_PAGES-1:
+        error=4
+    byte = bitmap[byte_idx]
+    bit = (byte >> bit_idx) & 0x01
+    return bit
+)
+
+( given the index of a page, returns the bit in the bitmap )
+( idx:* -: bit )
+@get_bit ( idx* -- bit )
+;&idx STA2 ( -- )
+;&idx LDA2 #04 SFT2 ;&short_idx STA2
+#0007  ;&idx LDA2  ;&short_idx LDA2 #40 SFT2 SUB2 SUB2 ;&bit_idx STA2 
+;&short_idx LDA2 N_PAGES #04 SFT2 #0001 SUB2 GTH2 #00 EQU ,&cont JCN
+    #04 .error STZ
+    JMP2r
+&cont
+;bitmap ;&short_idx LDA2 #0002 MUL2 ADD2 LDA2 ;&short STA2
+;&short LDA2 ;&bit_idx LDA2 NIP SFT2 NIP #01 AND 
+JMP2r
+&idx $2 
+&short_idx $2 
+&bit_idx $2 
+&short $2
+
+@bitmap $20
+
+@N_PAGES #0100 JMP2r

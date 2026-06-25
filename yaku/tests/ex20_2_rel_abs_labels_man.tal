@@ -1,0 +1,27 @@
+( ex20_2_rel_abs_labels.tal )
+ |0100
+ #0003 #0002 #0001 ;f_1/enter JSR2 ,&r2 STR2  
+ ,&r2 LDR2 POP #07 MUL ,&r3 STR 
+ ,&r3 LDR #18 DEO ( prints 'F' )
+ BRK 
+ &r1 $2 &r2 $2 &r3 $2 
+
+ @f_1 
+ ,&enter JMP
+ &r1 $2 &r2 $2 &r3 $2 &r4 $2 &enter
+ ,&r3 STR2 ,&r2 STR2 ,&r1 STR2 
+ ,&r2 LDR2 ,&r3 LDR2 MUL2 ,&r4 STR2 
+ ,&r4 LDR2 ;rr1 STA2 
+ ,&r1 LDR2 ;rr2 STA2 
+
+  @f_1_start 
+,&enter JMP &r5 $2 &r6 $2 &enter
+ ;rr2 LDA2 ;rr1 LDA2 ADD2 ,&r5 STR2 
+ ,&r5 LDR2 ;rr1 STA2 
+ ,&r5 LDR2 ;rr2 STA2 
+ ,&r5 LDR2 NIP ;f_1_start JCN2 
+ ;rr1 LDA2 ;rr2 LDA2 ADD2  
+ JMP2r 
+
+ @rr1 $2 @rr2 $2 
+

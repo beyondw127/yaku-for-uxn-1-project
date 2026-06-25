@@ -1,0 +1,14 @@
+( In this example we use an 8-bit register to calculate 6*7 )
+|0000
+@x $1
+
+|0100
+( store 6 in register x, as a byte )
+#06 .x STZ
+( load 6 from x )
+.x LDZ
+( load 6 from x, add 1, multiply both )
+.x LDZ INC MUL
+#18 DEO ( prints '*' )
+
+BRK

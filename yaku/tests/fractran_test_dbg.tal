@@ -1,0 +1,778 @@
+|00 @System  $2  $2  $1  $1  $2  $2  $2  $2  $1 &state $1
+|0100
+fractran_test
+
+BRK
+@fractran_test_x #0001 JMP2r
+@fractran_test_y #0002 JMP2r
+@fractran_test_z #0003 JMP2r
+@fractran_test_c2 #0004 JMP2r
+@fractran_test_c3 #0005 JMP2r
+@fractran_test_c5 #0006 JMP2r
+@fractran_test_c23 #0007 JMP2r
+@fractran_test_r #0008 JMP2r
+@fractran_test_x1 #0009 JMP2r
+@fractran_test_x2 #000a JMP2r
+@fractran_test_x11 #000b JMP2r
+@fractran_test_x23 #000c JMP2r
+@fractran_test_acc_init $10
+@fractran_test_pIdxs_init $36
+@fractran_test_p_init $84
+@fractran_test_acc $100
+@fractran_test_pIdxs $100
+@fractran_test_p $100
+@fractran_test_i $2
+@fractran_test
+{ #0000 SWP2 #10 SFT2 ;fractran_test_acc_init ADD2 STA2 JMP2r } STH2r #0007 #0000 range-map-short
+{ #0000 SWP2 #10 SFT2 ;fractran_test_pIdxs_init ADD2 STA2 JMP2r } STH2r #001a #0000 range-map-short
+{ #0000 SWP2 #10 SFT2 ;fractran_test_p_init ADD2 STA2 JMP2r } STH2r #0041 #0000 range-map-short
+{ #0000 SWP2 #10 SFT2 ;fractran_test_acc ADD2 STA2 JMP2r } STH2r #007f #0000 range-map-short
+{ #0000 SWP2 #10 SFT2 ;fractran_test_pIdxs ADD2 STA2 JMP2r } STH2r #007f #0000 range-map-short
+{ #0000 SWP2 #10 SFT2 ;fractran_test_p ADD2 STA2 JMP2r } STH2r #007f #0000 range-map-short
+#0007 ;fractran_test_acc_init STA2
+#0011 ;fractran_test_acc_init #0001 #10 SFT2 ADD2 STA2
+#0007 ;fractran_test_acc_init #0002 #10 SFT2 ADD2 STA2
+#000d ;fractran_test_acc_init #0003 #10 SFT2 ADD2 STA2
+#0001 ;fractran_test_acc_init #0004 #10 SFT2 ADD2 STA2
+#0001 ;fractran_test_acc_init #0005 #10 SFT2 ADD2 STA2
+#0001 ;fractran_test_acc_init #0006 #10 SFT2 ADD2 STA2
+#0001 ;fractran_test_acc_init #0007 #10 SFT2 ADD2 STA2
+{ 000c 0001 0005 0009 000b 000d 0011 0015 0019 001b 001d 001f 0021 0023 0025 0029 002b 002d 0031 0035 0039 003b 003d 003f 0041 0043 0000 } STH2r 
+;&x5636b6742890 STA2 
+{ #10 SFT2 DUP2 LIT2 &x5636b6742890 $2 ADD2 LDA2 SWP2 ;fractran_test_pIdxs_init ADD2 STA2 JMP2r } STH2r
+ #001a #0000 range-map-short
+{ 0008 0001 0005 0001 0002 0001 0005 0001 0000 0000 0005 0001 0009 0001 000a 0001 0001 0001 0004 0001 0002 0001 0004 0001 0009 0001 0000 0000 0004 0001 0001 0001 000a 0001 0006 0001 0003 0001 0006 0001 0000 0000 0006 0001 000b 0001 000c 0001 0002 0001 0007 0001 0003 0001 0007 0001 000b 0001 0000 0000 0007 0001 0002 0001 000c 0001 } STH2r
+;&x5636b6743f38 STA2 
+{ #10 SFT2 DUP2 LIT2 &x5636b6743f38 $2 ADD2 LDA2 SWP2 ;fractran_test_p_init ADD2 STA2 JMP2r } STH2r 
+#0041 #0000 range-map-short
+#007f INC2 #0000
+OVR2 OVR2 SUB2 #fff7 GTH2 ?&l_e_fractran_test_25
+&l_fractran_test_25
+
+( insert )
+DUP2 ( i i )
+DUP2 ( i i i )
+DUP2 ( i i i i )
+( end insert )
+;fractran_test_i STA2 ( i i i )
+( insert )
+( This sequence is a no-op here ! )
+ROT2
+ROT2
+SWP2 
+( end insert )
+#0000 ;fractran_test_acc ( i i i 0 acc )
+( ;fractran_test_i LDA2  )
+( insert )
+ROT2 ( i i 0 acc i )
+( end insert )
+#10 SFT2 ADD2 STA2 ( i i 0 pIdxs )
+#0000 ;fractran_test_pIdxs 
+( insert )
+ROT2 ( i 0 pIdxs i )
+( end insert )
+( ;fractran_test_i LDA2  )
+#10 SFT2 ADD2 STA2 ( i )
+#0000 ;fractran_test_p ( i 0 p )
+( insert )
+ROT2 ( 0 p i )
+( end insert )
+( ;fractran_test_i LDA2  )
+#10 SFT2 ADD2 STA2 ( -- )
+;fractran_test_i LDA2 INC2 OVR2 OVR2 NEQ2 ?&l_fractran_test_25
+;fractran_test_i LDA2 INC2 ;fractran_test_i STA2
+
+&l_e_fractran_test_25 POP2 POP2
+#0007 INC2 #0000
+OVR2 OVR2 SUB2 #fff7 GTH2 ?&l_e_fractran_test_30
+&l_fractran_test_30
+( 20241201 OK TO HERE )
+
+DUP2
+;fractran_test_i STA2
+;fractran_test_acc_init 
+OVR2
+SWP2
+OVR2
+#10 SFT2 ADD2 LDA2 ;fractran_test_acc 
+ROT2
+#10 SFT2 ADD2 STA2
+INC2 OVR2 OVR2 NEQ2 ?&l_fractran_test_30 
+;fractran_test_i LDA2 INC2 ;fractran_test_i STA2
+
+&l_e_fractran_test_30 POP2 POP2
+#001a INC2 #0000 
+OVR2 OVR2 SUB2 #fff7 GTH2 ?&l_e_fractran_test_33 
+&l_fractran_test_33
+DUP2
+;fractran_test_i STA2
+;fractran_test_pIdxs_init OVR2
+SWP2
+OVR2
+#10 SFT2 ADD2 LDA2 ;fractran_test_pIdxs 
+ROT2
+#10 SFT2 ADD2 STA2
+
+INC2 OVR2 OVR2 NEQ2 ?&l_fractran_test_33 
+;fractran_test_i LDA2 INC2 ;fractran_test_i STA2
+
+&l_e_fractran_test_33 POP2 POP2
+#0042 INC2 #0001
+OVR2 OVR2 SUB2 #fff7 GTH2 ?&l_e_fractran_test_36
+&l_fractran_test_36
+
+( insert )
+DUP2
+( end insert )
+;fractran_test_i STA2
+;fractran_test_p_init 
+( insert )
+OVR2
+SWP2
+OVR2
+( end insert )
+( ;fractran_test_i LDA2  )
+#0001 SUB2 #10 SFT2 ADD2 LDA2 ;fractran_test_p 
+( insert )
+ROT2
+( end insert )
+( ;fractran_test_i LDA2  )
+#0001 SUB2 #10 SFT2 ADD2 STA2
+( ;fractran_test_i LDA2  )
+INC2 OVR2 OVR2 NEQ2 ?&l_fractran_test_36
+;fractran_test_i LDA2 INC2 ;fractran_test_i STA2
+
+&l_e_fractran_test_36 POP2 POP2
+
+{ 000f "Initial 20 "state: 20 } STH2r 
+print-string #2018 DEO ( , ) #2018 DEO
+;fractran_test_acc_init LDA2 INC2 #0001
+OVR2 OVR2 SUB2 #fff7 GTH2 ?&l_e_fractran_test_40
+&l_fractran_test_40
+( insert )
+DUP2
+( end insert )
+;fractran_test_i STA2
+;fractran_test_acc_init 
+( insert )
+SWP2
+( end insert )
+( ;fractran_test_i LDA2 )
+#10 SFT2 ADD2 LDA2 #0000 gt2 #00 EQU ?&b41
+;fractran_test_acc_init ;fractran_test_i LDA2 
+#10 SFT2 ADD2 LDA2 
+print-int #20 print-char
+&b41
+( 20241202 OK TO HERE )
+;fractran_test_i LDA2 INC2 OVR2 OVR2 NEQ2 ?&l_fractran_test_40
+;fractran_test_i LDA2 INC2 ;fractran_test_i STA2
+
+&l_e_fractran_test_40 POP2 POP2
+#0a18 DEO
+;fractran_test_acc ;fractran_test_pIdxs ;fractran_test_p runFractranModel
+{ 000f "Final 20 "state: 20 20 20 } STH2r 
+print-string #2018 DEO ( , ) #2018 DEO
+
+;fractran_test_acc LDA2 INC2 #0001
+OVR2 OVR2 SUB2 #fff7 GTH2 ?&l_e_fractran_test_46
+&l_fractran_test_46
+( insert )
+DUP2
+( end insert )
+;fractran_test_i STA2
+
+;fractran_test_acc 
+( insert )
+SWP2
+( end insert )
+( ;fractran_test_i LDA2  )
+#10 SFT2 ADD2 LDA2 #0000 gt2 #00 EQU ?&b47
+;fractran_test_acc 
+;fractran_test_i LDA2 
+#10 SFT2 ADD2 LDA2 print-int #20 print-char
+&b47
+;fractran_test_i LDA2 INC2 OVR2 OVR2 NEQ2 ?&l_fractran_test_46
+;fractran_test_i LDA2 INC2 ;fractran_test_i STA2
+
+&l_e_fractran_test_46 POP2 POP2
+#0a18 DEO
+POP2r exit BRK ( MAIN )
+
+( LIBRARY ROUTINES )
+( ==== runFractranModel ==== )
+@runFractranModel_p $2
+@runFractranModel_pIdxs $2
+@runFractranModel_acc $2
+@runFractranModel_j $2
+@runFractranModel_k $2
+@runFractranModel_acc_r $2
+@runFractranModel_n_k $2
+@runFractranModel_t_k $2
+@runFractranModel_n_v $2
+@runFractranModel_t_v $2
+@runFractranModel_start_t_j_idx $2
+@runFractranModel_end_t_j_idx $2
+@runFractranModel_start_n_j_idx $2
+@runFractranModel_end_n_j_idx $2
+@runFractranModel_cond 01
+@runFractranModel
+( insert 1 )
+;runFractranModel_p STA2
+DUP2
+;runFractranModel_pIdxs STA2
+SWP2
+;runFractranModel_acc STA2
+
+&w_runFractranModel_8
+;runFractranModel_pIdxs LDA2 
+LDA2 INC2 #0001
+OVR2 OVR2 SUB2 #fff7 GTH2 ?&runFractranModel_for_p_e
+&runFractranModel_for_p
+DUP2
+;runFractranModel_j STA2
+
+;runFractranModel_pIdxs LDA2
+#0002 ROT2
+mul2 #0001 SUB2
+#10 SFT2
+ADD2
+LDA2
+;runFractranModel_start_t_j_idx STA2
+
+( insert 1 end )
+( insert 2 )
+;runFractranModel_pIdxs LDA2
+#0002 ;runFractranModel_j LDA2
+mul2 #10 SFT2
+ADD2
+LDA2
+#0001 SUB2
+;runFractranModel_end_t_j_idx STA2
+( insert 2 end ) 
+( insert 3 )
+;runFractranModel_pIdxs LDA2
+#0002 ;runFractranModel_j LDA2
+mul2 #10 SFT2
+ADD2
+LDA2
+;runFractranModel_start_n_j_idx STA2
+( insert 3 end )
+
+( insert 4 )
+;runFractranModel_pIdxs LDA2
+#0002 ;runFractranModel_j LDA2
+mul2 INC2
+#10 SFT2
+ADD2
+LDA2
+#0001 SUB2
+DUP2
+;runFractranModel_end_n_j_idx STA2
+( insert 4 end )
+
+#01 ;runFractranModel_cond STA ( scalar )
+( insert 5 )
+;runFractranModel_start_n_j_idx LDA2
+( insert 5 end )
+OVR2 OVR2 SUB2 #fff7 GTH2 ?&runFractranModel_for_n_e
+&runFractranModel_for_n
+;runFractranModel_k STA2
+;runFractranModel_p LDA2 
+( insert 6 )
+DUP2
+SWP2
+DUP2
+SWP2
+;runFractranModel_k LDA2
+SWP2
+OVR2
+#0001 SUB2
+#10 SFT2
+ADD2
+LDA2
+DUP2
+;runFractranModel_n_k STA2
+ROT2
+ROT2
+#10 SFT2
+ADD2
+LDA2
+;runFractranModel_n_v STA2
+SWP2
+;runFractranModel_start_t_j_idx LDA2
+;runFractranModel_end_t_j_idx LDA2
+( insert 6 end )
+lookup ;runFractranModel_t_v STA2 ( scalar )
+
+;runFractranModel_acc LDA2 ;runFractranModel_n_k LDA2 
+#10 SFT2 ADD2 LDA2 
+#0000 gt2 ;runFractranModel_acc LDA2 
+;runFractranModel_n_k LDA2 #10 SFT2 ADD2 LDA2 
+;runFractranModel_n_v LDA2 gte2 ;runFractranModel_t_v LDA2 
+;runFractranModel_n_v LDA2 gte2 ORA AND not ?&b19
+!&b19_e
+&b19
+#00 ;runFractranModel_cond STA ( scalar )
+DUP2 !&runFractranModel_for_n_e
+!&c_e19
+&b19_e
+
+&c_e19
+;runFractranModel_k LDA2 INC2 INC2 OVR2 OVR2 GTH2 ?&runFractranModel_for_n
+;runFractranModel_k LDA2 INC2 INC2 ;runFractranModel_k STA2
+
+&runFractranModel_for_n_e POP2 POP2
+
+;runFractranModel_cond LDA ?&b24
+!&b24_e
+&b24
+;runFractranModel_acc LDA2 LDA2 INC2 #0001
+OVR2 OVR2 SUB2 #fff7 GTH2 ?&runFractranModel_for_acc_e
+&runFractranModel_for_acc
+( insert 7a )
+DUP2
+( insert 7a end )
+;runFractranModel_acc_r STA2
+( ;runFractranModel_acc_r LDA2 ) 
+;runFractranModel_p LDA2 
+;runFractranModel_start_t_j_idx LDA2 ( SCALAR IN ARG by VAL ) 
+;runFractranModel_end_t_j_idx LDA2 ( SCALAR IN ARG by VAL ) 
+lookup ;runFractranModel_t_v STA2 ( scalar )
+;runFractranModel_acc_r LDA2 ( SCALAR IN ARG by VAL ) 
+;runFractranModel_p LDA2 
+;runFractranModel_start_n_j_idx LDA2 ( SCALAR IN ARG by VAL ) 
+;runFractranModel_end_n_j_idx LDA2 ( SCALAR IN ARG by VAL ) 
+lookup ;runFractranModel_n_v STA2 ( scalar )
+;runFractranModel_t_v LDA2 
+#0000 gt2 #00 EQU ?&b28
+;runFractranModel_acc LDA2 
+( insert 7b )
+DUP2
+SWP2
+( insert 7b end )
+;runFractranModel_acc_r LDA2 
+#10 SFT2 ADD2 LDA2 ;runFractranModel_t_v LDA2 ADD2 
+( insert 7c )
+SWP2
+( insert 7c end )
+( ;runFractranModel_acc LDA2 ) ;runFractranModel_acc_r LDA2 
+#10 SFT2 ADD2 STA2
+
+&b28
+
+;runFractranModel_n_v LDA2 #0000 gt2 #00 EQU ?&b29
+;runFractranModel_acc LDA2
+( insert )
+DUP2
+SWP2
+( end insert )
+;runFractranModel_acc_r LDA2 
+#10 SFT2 ADD2 LDA2 ;runFractranModel_n_v LDA2 SUB2 
+( insert )
+SWP2
+( insert end )
+( ;runFractranModel_acc LDA2 )
+;runFractranModel_acc_r LDA2 #10 SFT2 ADD2 STA2
+
+&b29
+;runFractranModel_acc_r LDA2 
+INC2 OVR2 OVR2 NEQ2 ?&runFractranModel_for_acc
+;runFractranModel_acc_r LDA2 INC2 ;runFractranModel_acc_r STA2
+
+&runFractranModel_for_acc_e POP2 POP2
+;runFractranModel_end_t_j_idx LDA2 ( #0002 ADD2 ) 
+;runFractranModel_start_t_j_idx LDA2
+OVR2 OVR2 SUB2 #fff7 GTH2 ?&runFractranModel_for_t_e
+&runFractranModel_for_t
+( insert )
+DUP2
+( end insert )
+;runFractranModel_k STA2
+;runFractranModel_p LDA2 ( ;runFractranModel_k LDA2 )
+( insert )
+DUP2
+SWP2
+ROT2
+SWP2
+OVR2
+( end insert )
+#0001 SUB2 #10 SFT2 ADD2 LDA2 
+( insert )
+DUP2
+( end insert )
+;runFractranModel_t_k STA2 ( scalar )
+( insert )
+ROT2
+ROT2
+( end insert )
+( ;runFractranModel_p LDA2 ;runFractranModel_k LDA2 )
+#10 SFT2 ADD2 LDA2 ;runFractranModel_t_v STA2 ( scalar )
+;runFractranModel_acc LDA2 
+( ;runFractranModel_t_k LDA2 )
+( insert )
+SWP2
+( end insert )
+#10 SFT2 ADD2 LDA2 #0000 EQU2 ?&b34
+!&b34_e
+&b34
+( OK to here )
+;runFractranModel_t_v LDA2 ;runFractranModel_acc LDA2 
+( insert )
+SWP2
+OVR2
+( end insert )
+;runFractranModel_t_k LDA2 
+#10 SFT2 ADD2 STA2
+;runFractranModel_t_k LDA2 
+( insert )
+SWP2
+( end insert )
+( ;runFractranModel_acc LDA2  )
+STA2
+!&c_e34
+&b34_e
+
+&c_e34
+
+;runFractranModel_k LDA2 INC2 INC2 OVR2 OVR2 GTH2 ?&runFractranModel_for_t
+;runFractranModel_k LDA2 INC2 INC2 ;runFractranModel_k STA2
+
+&runFractranModel_for_t_e POP2 POP2
+DUP2 
+!&runFractranModel_for_p_e
+!&c_e24
+&b24_e
+
+&c_e24
+
+;runFractranModel_j LDA2 INC2 OVR2 OVR2 NEQ2 ?&runFractranModel_for_p
+;runFractranModel_j LDA2 INC2 ;runFractranModel_j STA2
+
+&runFractranModel_for_p_e POP2 POP2
+;runFractranModel_cond LDA
+?&w_runFractranModel_8
+JMP2r
+( runFractranModel is entirely done and OK )
+( ==== lookup ==== )
+@lookup_v $2
+@lookup_e $2
+@lookup_b $2
+@lookup_p $2
+@lookup_k $2
+@lookup_i $2
+@lookup
+;lookup_e STA2
+( insert )
+ROT2
+ROT2
+( insert end )
+( ;lookup_b STA2 )
+;lookup_p STA2
+;lookup_k STA2
+#0000 ;lookup_v STA2
+;lookup_e LDA2
+( insert )
+SWP2
+( end insert )
+( ;lookup_b LDA2 )
+OVR2 OVR2 SUB2 #fff7 GTH2 ?&lookup_for_k_e
+&lookup_for_k
+( insert )
+DUP2
+( end insert )
+;lookup_i STA2
+;lookup_p LDA2 
+( insert )
+SWP2
+( end insert )
+( ;lookup_i LDA2  )
+#0001 SUB2 #10 SFT2 ADD2 LDA2 ;lookup_k LDA2 EQU2 ?&b6
+!&b6_e
+&b6
+;lookup_p LDA2 ;lookup_i LDA2 #10 SFT2 ADD2 LDA2 ;lookup_v STA2 ( scalar )
+DUP2 
+!&lookup_for_k_e
+!&c_e6
+&b6_e
+
+&c_e6
+;lookup_i LDA2 INC2 INC2 OVR2 OVR2 GTH2 ?&lookup_for_k
+;lookup_i LDA2 INC2 INC2 ;lookup_i STA2
+
+&lookup_for_k_e POP2 POP2
+;lookup_v LDA2 
+JMP2r
+( lookup is entirely done and OK )
+@exit
+POP2
+#80 .System/state DEO
+POP2r
+BRK
+
+@fmt-dec-short
+DUP2
+n-dec-digits-in-short DUP
+#01 EQU
+?&done ,&n-dig STR
+#01
+&loop
+ROT
+ROT
+DUP2
+#000a DIV2
+DUP2
+#000a MUL2
+ROT2
+SWP2
+SUB2
+NIP
+#30 ADD
+ROT
+ROT
+SWP2
+SWP
+SWP2
+ROT
+INC
+DUP
+LIT
+&n-dig
+$1 LTH
+?&loop
+&done
+ROT
+ROT
+NIP
+#30 ADD
+SWP
+JMP2r
+( fmt-dec-short is OK ) 
+@gt2
+GTH2k
+STH
+OVR2
+OVR2
+#8000 LTH2
+STH
+ANDr
+#8000 LTH2
+STHr
+AND
+?&pop GTH2k
+STH
+OVR2
+OVR2
+#7fff GTH2
+STH
+ANDr
+#7fff GTH2
+STHr
+AND
+?&pop #7fff GTH2
+ROT
+ROT
+#8000 LTH2
+AND
+?&true #00
+JMP2r
+&pop
+POP2
+POP2
+&true
+#01 JMP2r
+( gt2 is OK )
+@gte2
+lt2 #01 SWP
+SUB
+JMP2r
+( gte2 is OK )
+@lt2
+LTH2k
+STH
+OVR2
+OVR2
+#8000 LTH2
+STH
+ANDr
+#8000 LTH2
+STHr
+AND
+?&pop LTH2k
+STH
+OVR2
+OVR2
+#7fff GTH2
+STH
+ANDr
+#7fff GTH2
+STHr
+AND
+?&pop #8000 LTH2
+ROT
+ROT
+#7fff GTH2
+AND
+?&true #00 JMP2r
+&pop
+POP2
+POP2
+&true
+#01
+JMP2r
+( lt2 is OK )
+@mul2
+OVR2
+OVR2
+#8000 LTH2
+STH
+#8000 LTH2
+STH
+ANDrk
+STHr
+?&pp ORArk
+STHr
+#01 SWP
+SUB
+?&mm STH2r
+#01 SWP
+SUB
+AND
+?&mp !&pm
+&mp
+SWP2
+&pm
+neg2 MUL2
+!neg2
+&mm
+neg2 neg2
+&pp
+MUL2
+POP2r
+JMP2r
+( mul2 is OK )
+@n-dec-digits-in-short
+DUP2
+#0000 EQU2
+?&is_zero #2710 #0005
+&loop
+ROT2
+ROT2
+DIV2k
+#0000 NEQ2
+?&done_loop #000a DIV2
+ROT2
+#0001 SUB2
+!&loop
+&is_zero
+#01 JMP2r
+&done_loop
+POP2
+POP2
+NIP
+JMP2r
+( n-dec-digits-in-short is OK )
+@neg2
+#0000 SWP2
+SUB2
+JMP2r
+( neg2 is OK )
+@not #01 SWP SUB JMP2r
+( not is OK )
+@print-char
+#18 DEO
+JMP2r
+( print-char is OK )
+@print-int
+DUP2
+#0000 EQU2
+?&zero fmt-dec-short { #18 DEO
+JMP2r
+} STH2r
+!proc-n-items-from-ws
+&zero
+POP2
+#3018 DEO
+JMP2r
+( print-int is OK )
+@print-string
+#18
+!write-string
+( print-string is OK )
+@proc-n-items-from-ws
+ROT
+STHk
+&loop
+#00 EQU
+?&end STH2k
+JSR2
+STH2r
+STHr
+#01 SUB
+STHk
+!&loop
+&end
+POPr
+POP2
+JMP2r
+( proc-n-items-from-ws is OK )
+@range-map-short
+DUP2
+#0f SFT2
+NIP
+?&exit OVR2
+#0f SFT2
+NIP
+?&exit OVR2
+OVR2
+SUB2
+#0f SFT2
+NIP
+?&exit
+&loop
+EQU2k
+?&done ROT2k
+JSR2
+POP2
+INC2
+!&loop
+&done
+NIP2
+SWP2
+JMP2
+&exit
+POP2
+POP2
+POP2
+JMP2r
+( range-map-short is OK )
+@update-len
+LDA2k
+ROT2
+ADD2
+SWP2
+STA2
+JMP2r
+( update-len is OK )
+@write-string
+STH
+DUP2
+LDA2
+SWP2
+INC2
+INC2
+DUP2
+ROT2
+ADD2
+SWP2
+&l
+LDAk
+STHrk
+DEO
+INC2
+GTH2k
+?&l POP2
+POP2
+POPr
+JMP2r
+
+@totalMemUsage 0000

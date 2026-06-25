@@ -1,0 +1,45 @@
+( This is an test case for identifying functions )
+(
+    The algorithm could be: whenever we encounter a JMP2, we go to the location and see if it is a function ending in JMP2r. If it ends in JMP2, we do it again. If it ends in JMP2r, we know that the parent was a tail call, and its parent too etc.
+    If it ends with neither, it's an error
+    The first pass is to split the tokes into chunks starting with @ and putting these in a hash;
+    we keep the @s in a list to maintain the original order although I think it does not matter much.    
+    Then whenever we encounter an absolute label reference, we process that entry in the hash
+
+)
+|0100 @main
+
+#0002 #0003 #0004 #0005 ;quadratic JSR2 
+NIP #18 DEO ( prints 'u' )
+BRK
+
+( c b a x -> a*x^2 ) 
+
+@quadratic 
+    ;square JSR2 (  c b x a*x^2 )    
+    ROT2 ROT2 ( c a*x^2 b x )     
+    ;linear JSR2 ( c a*x^2 b*x )  ( 00 02 00 64 00 0f )
+    ;sum JMP2
+
+( a x ->  x a*x^2 )     
+@square    
+    DUP2 ( a x x )
+    ROT2 ROT2 ( x a x ) 
+    DUP2 ( x a x x ) 
+    MUL2 MUL2 ( x a*x*x ) 
+    JMP2r
+
+( b x -> b*x )
+@linear
+    MUL2 ( b*x )
+    JMP2r
+
+( c a*x^2 b*x -> c+a*x^2+b*x )
+@sum 
+    ADD2 ( c a*x^2+b*x )
+    ADD2 ( c+a*x^2+b*x )
+    JMP2r
+
+
+
+

@@ -1,0 +1,479 @@
+( This is the suggested code skeleton for AE1
+  it also provides helper functions for printing
+)
+
+(
+ Dynamic memory allocation using pages and a bitmap
+)
+
+|0000
+( I suggest you use the zero page for temporary storage )
+@idx $2 @jj $2
+@n_pages $2
+@byte_idx $2
+@bit_idx $2
+@byte $1
+@error $1
+
+|0100
+(
+Run your integration tests here; 
+For unit tests, create a separate source file dynamic-memory-alloc-unit-tests.tal
+)
+mem_test
+BRK
+
+( define your integration tests here )
+
+@mem_test ( is only correct up to 17 )
+#0001 ,&mem_sz STR2
+&loop
+    ,&mem_sz LDR2 #0038 LTH2 ,&body JCN
+    ,&done JMP
+    &body
+    ,&mem_sz LDR2 malloc ,&ptr STR2
+    ,&mem_sz LDR2 print16-dec #3a18 DEO #2018 DEO ,&ptr LDR2 print16-dec nl
+    ,&mem_sz LDR2 #001e gte ,&mem_sz LDR2 #0028 lte ,&ptr LDR2 N_PAGES LTH2 AND AND ,&free_mem JCN
+    ,&cont JMP
+    &free_mem
+        ,&ptr LDR2 free
+    &cont
+    ,&mem_sz LDR2 INC2 ,&mem_sz STR2
+    ,&loop JMP
+    &done
+JMP2r
+&mem_sz $2 &ptr $2
+
+@lte ( a* b* -: c )
+    GTH2 #01 SWP SUB JMP2r
+@gte ( a* b* -: c )
+    LTH2 #01 SWP SUB JMP2r
+
+( definitions of malloc, free and functions used to implement them )
+
+@malloc ( n_bytes* -- <allocation in bytes> )
+    #00 .error STZ
+    DUP2 #0000 EQU2 ,&done JCN ( n_bytes )
+    DUP2 ( n_bytes n_bytes )
+    DUP2 ( n_bytes n_bytes n_bytes )
+    #0000 NEQ2 ,&cont1 JCN
+        POP2 POP2
+        #01 .error STZ
+        #0000 JMP2r 
+    &cont1
+    #0001 SUB2 PAGE_SZ DIV2 #0001 ADD2 .n_pages STZ2 ( n_bytes )
+    .n_pages LDZ2 N_PAGES #0001 SUB2 GTH2 ,&cont2 JCN
+        POP2
+        #07 .error STZ
+        #0000 JMP2r 
+    &cont2
+    #0000 ,&idx STR2 ( n_bytes )
+    &loop
+        ,&idx LDR2 N_PAGES LTH2 ( the loop condition )
+        ,&body JCN   ( jump to body if condition true )
+        ,&done JMP   ( exit loop if condition false )
+        &body
+        ,&idx LDR2 .n_pages LDZ2 alloc_sz_is_free_at_idx #00 EQU ,&cont JCN
+            .error LDZ #00 EQU ,&cont3 JCN
+                #0000 JMP2r
+            &cont3
+            ,&idx LDR2 .n_pages LDZ2 claim_alloc_sz_at_idx
+            ;n_allocs LDA2 DUP2 MAX_N_ALLOCS EQU2 ,&error_max_alloc JCN
+            INC2 ;n_allocs STA2 ( n_allocs++ )
+            ,&idx LDR2 DUP2 insertPtr POP ( lazy, ignore return status )
+            PAGE_SZ MUL2 DMEM_START ADD2
+            JMP2r
+         &cont
+        ,&idx LDR2 INC2 ,&idx STR2
+        ,&loop JMP ( jump back to the top of the loop )
+    &done
+    #02 .error STZ
+    #0000 
+    JMP2r
+&idx $2
+&error_max_alloc
+    #05 .error STZ
+    #0000
+    JMP2r
+
+@free ( ptr* -- )
+    SWP2 DMEM_START SUB2 PAGE_SZ DIV2 ( idx )
+    ( if idx<0 or idx>N_PAGES-1: error=2 )
+    DUP2 DUP2 ( idx idx idx )
+    #0000 LTH2 ( idx* idx* b1 )
+    ROT ROT ( idx* b1 idx* )
+    N_PAGES #0001 SUB2 GTH2 ( idx* b1 b2 )
+    ORA #01 SWP SUB ,&cont JCN
+        #02 .error STZ
+        JMP2r
+    &cont
+    DUP2 DUP2 lookupPtr ( idx idx n_bytes )
+    ( check if lookupPtr returned 0000 
+        if so, error=0 else error=6
+    )
+    DUP2 #0000 EQU2 ,&error6 JCN
+    #00 .error STZ2
+    #0001 SUB2 PAGE_SZ DIV2 #0001 ADD2 ( idx idx n_pages , bytes to pages )
+    free_alloc_sz_at_idx ( idx )
+    deletePtr POP ( lazy, ignore return status )
+    ;n_allocs LDA2 #0001 SUB2 ;n_allocs STA2
+    JMP2r
+    &error6 
+        #06 .error STZ2 JMP2r
+
+( allocation size is in pages )
+( idx:16 alloc_sz:16 -- 00 or 01 )
+@alloc_sz_is_free_at_idx ( idx* alloc_sz* -: b )
+    #0000 .jj STZ2 ( idx:16 alloc_sz:16 )
+    &loop
+        DUP2 .jj LDZ2 ( idx:16 alloc_sz:16 alloc_sz:16 jj:16 ) SWP2 LTH2 ( idx:16 alloc_sz:16 cond )
+        ,&body JCN   ( idx:16 alloc_sz:16 )
+        ,&done JMP   ( idx:16 alloc_sz:16 )
+        &body 
+        SWP2 ( alloc_sz:16 idx:16 )
+        DUP2 DUP2 ( alloc_sz:16 idx:16 idx:16 idx:16 )
+        .jj LDZ2 ADD2 N_PAGES #0001 SUB2 GTH2 ,&ret_0_over JCN ( alloc_sz:16 idx:16 idx:16 )
+        .jj LDZ2 ADD2 get_bit ,&ret_0_set JCN ( alloc_sz:16 idx:16 )
+        SWP2 ( idx:16 alloc_sz:16 )
+        .jj LDZ2 INC2 .jj STZ2
+        ,&loop JMP       ( jump back to the top of the loop )
+        &ret_0_over 
+            #04 .error STZ
+            POP2 POP2 POP2 #00 JMP2r
+        &ret_0_set POP2 POP2 #00 JMP2r
+    &done POP2 POP2 #01
+JMP2r
+
+@claim_alloc_sz_at_idx ( idx* alloc_sz* -: ) 
+    #0000 .jj STZ2 ( idx:16 alloc_sz:16 )
+    &loop
+        DUP2 .jj LDZ2 SWP2 LTH2 ( idx:16 alloc_sz:16 cond )
+        ,&body JCN   ( idx:16 alloc_sz:16 )
+        ,&done JMP   ( idx:16 alloc_sz:16 )
+        &body
+        SWP2 ( alloc_sz:16 idx:16 )
+        DUP2 .jj LDZ2 ADD2 set_bit ( alloc_sz:16 idx:16 )
+        .jj LDZ2 INC2 .jj STZ2
+        ,&loop JMP ( jump back to the top of the loop )
+    &done
+    POP2 POP2
+    JMP2r
+
+@free_alloc_sz_at_idx ( idx* alloc_sz* -: ) 
+    #0000 .jj STZ2 ( idx:16 alloc_sz:16 )
+    &loop
+        DUP2 .jj LDZ2 SWP2 LTH2 ( idx:16 alloc_sz:16 cond )
+        ,&body JCN ( idx:16 alloc_sz:16 )
+        ,&done JMP ( idx:16 alloc_sz:16 )
+        &body
+        SWP2 ( alloc_sz:16 idx:16 )
+        DUP2 .jj LDZ2 ADD2 clear_bit
+        .jj LDZ2 INC2 .jj STZ2
+        ,&loop JMP ( jump back to the top of the loop )
+    &done
+    POP2 POP2
+    JMP2r
+
+( given the index of a page, returns the bit in the bitmap )
+( idx:16 -- bit:8 )
+@get_bit ( idx* -: bit )
+    DUP2 ( idx:16 idx:16 )
+    #03 SFT2  ( idx:16 byte-idx:16 )
+    .byte_idx STZ2 ( idx:16 )
+    #0007 SWP2 .byte_idx LDZ2 #30 SFT2 SUB2 SUB2
+    .bit_idx STZ2 ( -- ) 
+    .byte_idx LDZ2 N_PAGES #0001 SUB2 GTH2 ,&error_outside JCN
+    ;bitmap .byte_idx LDZ2 ADD2 LDA 
+    .byte STZ
+    .byte LDZ .bit_idx LDZ2 NIP SFT #01 AND
+    JMP2r
+    &error_outside
+        #04 .error STZ JMP2r
+
+@clear_bit ( idx -: )
+    DUP2 ( idx:16 idx:16 )
+    #03 SFT2  ( idx:16 byte-idx:16 )
+    .byte_idx STZ2 ( idx:16 )
+    #0007 SWP2 .byte_idx LDZ2 #30 SFT2 SUB2 SUB2 ( v )
+    .bit_idx STZ2 ( -- ) 
+    ;bitmap .byte_idx LDZ2 ADD2 LDA ( v )
+    .byte STZ ( -- )
+    .bit_idx LDZ2 mask_clear ( m )
+    .byte LDZ SWP AND ;bitmap .byte_idx LDZ2 ADD2 STA
+JMP2r
+
+@set_bit ( idx -: )
+    DUP2 ( idx:16 idx:16 )
+    #03 SFT2  ( idx:16 byte-idx:16 )
+    .byte_idx STZ2 ( idx:16 )
+    #0007 SWP2 .byte_idx LDZ2 #30 SFT2 SUB2 SUB2
+    .bit_idx STZ2 ( -- ) 
+    ;bitmap .byte_idx LDZ2 ADD2 LDA 
+    .byte STZ
+    .bit_idx LDZ2 mask_set
+    .byte LDZ SWP ORA ;bitmap .byte_idx LDZ2 ADD2 STA
+JMP2r
+
+
+@mask_clear ( bit_idx* -: mask )
+.bit_idx STZ2 #ff [ #01 .bit_idx LDZ2 NIP #40 SFT SFT ] EOR
+JMP2r
+
+@mask_set ( bit_idx* -: mask )
+.bit_idx STZ2
+#01 .bit_idx LDZ2 NIP #40 SFT SFT
+JMP2r
+
+( ==================================================== )
+( Functions for handling the allocation dictionary )
+@clearAllocation
+#0000 ;&i STA2
+&loop
+;&i LDA2 #0080 EQU2 ,&done JCN ( stop when the map is full ) ( alloc_sz* ptr_idx* )
+    #0000 ;&i LDA2 STA2
+    #0000 ;&i LDA2 #0002 ADD2 STA2
+    ;&i LDA2 #0004 ADD2 ;&i STA2 
+,&loop JMP
+&done
+JMP2r
+&i $2
+
+@insertPtr ( alloc_sz* ptr_idx* -: bool )
+&loop 
+    ;&i #0020 EQU2 ,&full JCN 
+    ;&i ;allocated ADD2 LDA2 DUP2 #0000 NEQ2 ,&cont JCN
+        DUP2
+        STA2 ( stores ptr_idx at allocated+i )
+        #0002 ADD2 STA2 ( stores alloc_sz at allocated+i+2 )
+        ,&done JMP
+    &cont
+        POP2
+    ;&i LDA2 #0004 ADD2 ;&i STA2 
+,&loop JMP
+&done
+#01 JMP2r
+&full
+POP2 POP2
+#00 JMP2r
+&i 0000
+
+@existsPtr ( ptr_idx* -: bool )
+&loop 
+    ;&i #0020 EQU2 ,&full JCN 
+    DUP2
+    ;&i ;allocated ADD2 LDA2 EQU2 ,&done JCN
+    ;&i LDA2 #0004 ADD2 ;&i STA2 
+,&loop JMP
+&done
+POP2
+#01 JMP2r
+&full
+#00 JMP2r
+&i 0000
+
+@lookupPtr ( ptr_idx* -: alloc_sz* )
+&loop 
+    ;&i #0020 EQU2 ,&full JCN 
+    DUP2
+    ;&i ;allocated ADD2 LDA2 DUP2 EQU2 ,&done JCN
+    POP2
+    ;&i LDA2 #0004 ADD2 ;&i STA2 
+,&loop JMP
+&done
+#0002 ADD2 LDA2 NIP2
+JMP2r
+&full
+#0000 JMP2r
+&i 0000
+
+@deletePtr ( ptr_idx* -: bool )
+&loop 
+    ;&i #0020 EQU2 ,&full JCN 
+    DUP2
+    ;&i ;allocated ADD2 LDA2 DUP2 EQU2 ,&done JCN
+    POP2
+    ;&i LDA2 #0004 ADD2 ;&i STA2 
+,&loop JMP
+&done
+DUP2 ( addr addr )
+#0002 ADD2 ( addr addr+2 )
+#0000 SWP2 STA2 
+#0000 SWP2 STA2 
+#01 JMP2r
+&full
+#00 JMP2r
+&i 0000
+
+
+( ==================================================== )
+( Functions for printing )
+@todo { 0005 "TODO 0a } STH2r print-str JMP2r
+
+@print-bit #30 ADD #18 DEO JMP2r
+@nl #0a18 DEO JMP2r
+@ws #2018 DEO JMP2r
+
+
+@print8 ( b -: )
+    DUP ( b b )
+    lonib ( b ln )
+    h2a ( b lna )
+    SWP ( lna b )
+    hinib ( lna hn )
+    h2a ( lna hna )
+    #18 DEO #18 DEO
+    JMP2r
+
+@print16 ( a* -: )
+    SWP
+    print8
+    print8
+    JMP2r
+
+@lonib ( a -: b )
+    #0f AND
+    JMP2r
+
+@hinib ( a -: b )
+    #04 SFT
+    JMP2r
+
+@h2a ( a -: b )
+    DUP ( a a )
+    #0a LTH ( a c1 )
+    DUP ( a c1 c1 )
+    #01 SWP SUB ( a c1 1-c1 )
+    #57 MUL ( a c1 [1-c1]*57 )
+    SWP ( a [1-c1]*57 c1 )
+    #30 MUL ( a [1-c1]*57 c1*30 )
+    ADD 
+    ADD ( a+[1-c1]*57+c1*30 )
+    JMP2r
+
+( To print a 1-byte unsigned integer 
+as a decimal number of 3 digits )
+( a -: )
+@print8-dec
+( h = x/100 )
+DUP ( x x ) 
+DUP #64  LTH ,&d2 JCN 
+#64 DIV ( x h ) DUP #30 ADD #18 DEO ( x h )
+( d = x - 100*h )
+#64 MUL SUB ( d )
+( t = d / 10 )
+DUP ( d d )
+&d2
+DUP #0a  LTH ,&d3 JCN
+#0a DIV ( d t ) DUP #30 ADD #18 DEO ( d t )
+( e = d - 10*t )
+#0a MUL SUB ( e ) 
+DUP ( e e )
+&d3
+#30 ADD #18 DEO
+POP
+JMP2r
+( To print a 2-byte unsigned integer 
+as a decimal number of 5 digits )
+( x:16 -> -- )
+( x* -: )
+@print16-dec
+    DUP2 ( x:16 x:16 )
+    DUP2 #2710 LTH2 ,&d2 JCN
+    ( T = x/10000 )
+    #2710 DIV2 ( x:16 T:16 ) DUP #30 ADD #18 DEO
+    ( Dt = x - 10000*T )
+    #2710 MUL2 SUB2 ( Dt )
+    DUP2 ( Dt Dt )
+    &d2
+    DUP2 #03e8  LTH2 ,&d3 JCN
+    ( D = Dt / 1000 )
+    #03e8 DIV2 ( Dt D ) DUP #30 ADD #18 DEO
+    ( ht = Dt-D*1000 )
+    #03e8 MUL2 SUB2  ( ht )
+    DUP2 ( ht ht )
+    &d3
+    DUP2 #0064  LTH2 ,&d4 JCN
+    ( h = ht /100 )
+    #0064 DIV2 ( ht h ) DUP #30 ADD #18 DEO
+    ( tt = ht - h*100 )
+    #0064 MUL2 SUB2 ( tt )
+    DUP2 ( tt tt )
+    &d4
+    ( t = tt / 10 )
+    #000a DIV2 ( tt t ) DUP #30 ADD #18 DEO
+    ( e = tt - 10*t )
+    #000a MUL2 SUB2 ( e ) #30 ADD #18 DEO POP
+    JMP2r
+
+( To print a string )
+( The string starts with a 2-byte lenght field )
+@print-str ( a* -: )
+    LDA2k ( ;str size )
+    SWP2 #0002 ADD2 SWP2 ( ;str+2 size )
+    DUP2 ( ;str+2 size size )
+    ( So we test if that is 0 and if not we keep going )
+    &loop
+    #0000 EQU2 ,&exit JCN ( ;str+2 size )
+    SWP2 ( size ;str+2 )
+    LDAk #18 DEO ( size ;str+2 )
+    INC2 SWP2 #0001 SUB2 DUP2 ( ;str+3 size-1 size-1 )
+    ,&loop JMP
+    &exit
+    POP2 POP2 POP2
+    JMP2r
+
+
+( This is only good for top-level reporting )
+( What I should do is have an error bit and set/check it when necessary )
+( If error-code == 0, there is no error )
+@abort-on-error
+    report-error
+    BRK 
+
+@continue-on-error
+    !report-error
+
+@report-error ( erc -- )
+    #0002 MUL2 ;errors ADD2 LDA2 JMP2
+
+@get-error
+    .error LDZ JMP2r
+
+( error strings )
+@errors =no-error =null-ptr =invalid-ptr =invalid-access =outside-page =max-alloc =ptr-not-alloc =alloc-too-large
+( errors )
+( 0 )
+@no-error JMP2r
+( 1 )
+@null-ptr { 000c "Null 20 "pointer } STH2r !print-str
+( 2 )
+@invalid-ptr { 0010 "Invalid 20 "pointer: } STH2r !print-str
+( 3 )
+@invalid-access { 000f "Invalid 20 "access: } STH2r !print-str
+( 4 )
+@outside-page { 0016 "Outside 20 "of 20 "page 20 "range: } STH2r !print-str
+( 5 )
+@max-alloc { 0021 "Max 20 "number 20 "of 20 "allocations 20 "reached } STH2r !print-str
+( 6 )
+@ptr-not-alloc { 0019 "Pointer 20 "was 20 "not 20 "allocated } STH2r !print-str
+( 7 )
+@alloc-too-large { 0014 "Allocation 20 "too 20 "large  } STH2r !print-str
+
+( END of functions for printing and strings )
+( ==================================================== )
+
+@PAGE_SZ ( -: a* ) #0010 JMP2r ( We allocate 16 bytes per page )
+@N_PAGES ( -: a* ) #0100 JMP2r ( We have a total of 256 pages, so we can allocate at most 4kB )
+@DMEM_START ( -: a* ) #f000 JMP2r ( Start at 60*1024 )
+@MAX_N_ALLOCS ( -: a* ) #0020 JMP2r ( We can allocate at most 32 regions )
+
+@n_allocs 0000
+@allocated $80 ( 32 tuples of the page idx and the alloc size )
+
+ ( N_PAGES bits, packed in bytes mean N_PAGES/8 entries, so with the above, the bitmap will take 64 bytes )
+ ( 0 means free )
+@bitmap $40
+
+( The allocation happens below this )
+|f000
+@vmem

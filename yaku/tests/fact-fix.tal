@@ -1,0 +1,15 @@
+( factorial with fixed-point )
+|0100 
+    #05 
+    {  
+        ,&f STR2 DUP ,&n STR
+        #01 NEQ ?{ #01 JMP2r } 
+        ( #03 MUL JMP #01 JMP2r )
+        ,&n LDR STHk
+         #01 SUB ,&f LDR2 DUP2 JSR2 
+        STHr DUP ,&n STR MUL
+        JMP2r
+        &f $2 &n $1
+    } STH2r DUP2 JSR2
+    #18 DEO ( 120 )
+BRK

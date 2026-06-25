@@ -1,0 +1,36 @@
+( A Hello World example )
+( |0000 
+    @a &b "Test
+    @x $2 &y $2
+    |0010
+    @z 'H 'e &zz 20 00
+)
+|0100 
+    ( #2a )
+	;hello_world 
+    ;say-hello JSR2
+    ADD2 POP2
+
+BRK
+
+@say-hello
+        ( STAk )
+		LDAk  #18 DEO 
+		INC2 
+		LDAk #18 DEO 
+		INC2 
+		LDAk #18 DEO 
+		INC2 
+		LDAk #18 DEO 
+		INC2 
+		LDAk #18 DEO 
+		INC2 
+		LDA #18 DEO 
+        #0000 #0001
+JMP2r
+
+@hello_world "Hello! 00 $7
+(
+@another-string "Hi, 00 't 'h 'e 'r 'e '! $3
+@rest
+)

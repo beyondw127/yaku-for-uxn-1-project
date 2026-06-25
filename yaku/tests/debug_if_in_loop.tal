@@ -1,0 +1,110 @@
+ |00 @System  $2  $2  $1  $1  $2  $2  $2  $2  $1 &state $1
+|0100
+fractran_test
+( #80 .System/state DEO )
+BRK
+@fractran_test_i $2
+@fractran_test_acc $100
+@fractran_test
+{ ( iter ) #0000 SWP2 #10 SFT2 ;fractran_test_acc ADD2 STA2 JMP2r } STH2r #007f #0000 range-map-short
+#000a ;fractran_test_acc STA2
+;fractran_test_acc LDA2 INC2 #0001
+OVR2 OVR2 SUB2 #fff7 GTH2 ?&l_e_fractran_test_5
+&l_fractran_test_5
+;fractran_test_i STA2
+
+;fractran_test_acc ;fractran_test_i LDA2 #10 SFT2 ADD2 LDA2 #0000 gt2 #00 EQU ?&b6
+#0001 ;fractran_test_acc ;fractran_test_i LDA2 #10 SFT2 ( HERE ) ADD2 STA2
+&b6
+;fractran_test_i LDA2 INC2 OVR2 OVR2 NEQ2 ?&l_fractran_test_5
+;fractran_test_i LDA2 INC2 ;fractran_test_i STA2
+&l_e_fractran_test_5 POP2 POP2
+POP2r exit BRK ( MAIN )
+( LIBRARY ROUTINES )
+@exit
+#80 .System/state DEO
+POP2r
+BRK
+
+@gt2
+GTH2k
+STH
+OVR2
+OVR2
+#8000
+LTH2
+STH
+ANDr
+#8000
+LTH2
+STHr
+AND
+?&pop
+GTH2k
+STH
+OVR2
+OVR2
+#7fff
+GTH2
+STH
+ANDr
+#7fff
+GTH2
+STHr
+AND
+?&pop
+#7fff
+GTH2
+ROT
+ROT
+#8000
+LTH2
+AND
+?&true
+#00
+JMP2r
+&pop
+POP2
+POP2
+&true
+#01
+JMP2r
+
+@range-map-short
+DUP2
+#0f
+SFT2
+NIP
+?&exit
+OVR2
+#0f
+SFT2
+NIP
+?&exit
+OVR2
+OVR2
+SUB2
+#0f
+SFT2
+NIP
+?&exit
+&loop
+EQU2k
+?&done
+ROT2k
+JSR2
+POP2
+INC2
+!&loop
+&done
+NIP2
+SWP2
+JMP2
+&exit
+POP2
+POP2
+POP2
+JMP2r
+( Parameters )
+( Module Globals )
+@totalMemUsage 0000

@@ -1,0 +1,27 @@
+
+|0100
+fractran_test
+BRK
+
+@ii $2
+@tacc $100
+@fractran_test
+
+#000a DUP2 ;tacc STA2 ( 000a )
+INC2 #0001 ( 000b 0001 )
+
+&l5
+[ DUP #2f ADD #18 DEO ]
+DUP2 ;ii STA2 ( 000b 0001 ii==0001 ii=1 )
+SWP2 ( 000b ii 0001 )
+;tacc ROT2 ( 000b 0001 tacc ii )  #10 SFT2 ADD2 LDA2 ( 000b 0001 tacc[1] )
+#0000 GTH2 #00 EQU ?&b6 ( 000b 0001 )
+#0001 ;tacc  ( 000b 0001 0001 tacc )
+ROT2 #10 SFT2 ADD2 STA2 ( 000b tacc[1]=1 )
+&b6
+;ii LDA2 ( 000b ii ) INC2 OVR2 OVR2 NEQ2 
+?&l5 ( 000b ii+1  )
+ ( ;ii LDA2 INC2 POP2 ) ( 000b ii+1  )
+POP2 POP2 ( -- )
+JMP2r
+

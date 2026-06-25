@@ -1,0 +1,15 @@
+|0100
+simple-loop
+BRK
+
+@simple-loop
+#00 ,&i STR
+&loop
+,&i LDR #20 ADD #18 DEO
+,&i LDR #08 EQU ,&done JCN
+,&i LDR INC ,&i STR
+,&loop JMP
+&done
+,&i LDR
+JMP2r
+&i $1

@@ -1,0 +1,50 @@
+( Uxntal comments are enclosed in "( "  and " )" 
+
+This is an Uxntal program but the purpose is to explain the basics of the syntax. Please read `ex00_basics.md` first.
+
+) 
+
+|0000 ( People usually write this indicate the start of the memory region. )
+
+( to create a register, you write an @ followed by the name. Like a variable name, a register name in Uxntal can be anything )
+@x $2 ( The $2 means that we reserve 2 bytes for the content of this register )
+@y $2
+@long_reg_name $8 
+
+|0100 ( every program starts at address 256. the '|' means padding, it is a way to say that all memory before this line that is not used, should be filled with zeroes. )
+
+#0006 ( put 6 on the stack as a 2-byte (16-bit, short in Java/C) 
+The '#' indicates that this is a literal constant value, otherwise Uxntal would consider it as an instruction. You can also write this as #00 #06 or LIT 00 LIT 06. 
+)
+LIT 00 LIT 07 ( same as #0007 )
+ADD2 ( adds the two values on the stack
+Every instruction in Uxntal is actually just a short name for a number. For example, ADD is the name for instruction number 0x18 (24 in decimal). The '2' means that this instruction works on 2-byte words instead of 1-byte words.
+For example: )
+#0003 #0006 ADD2 ( results in #0009 )
+#03 #06 ADD ( results in #09 )
+
+( To use a register, you need to store a value in it or load a value from it. For example, with the previous line we have #0009 on the stack. We can store this value in @x like this: )
+.x STZ2 ( the '.' means this is a register name; STZ means "store in zero page", which is the location for the registers. So this is the same as 
+short x=9;  
+
+To use the stored value we do
+)
+
+.x LDZ2 
+
+( so we can say the equivalent of 
+
+y = 2*x;
+
+like this:
+
+)
+
+.x LDZ2 #0002 MUL2 .y STZ2
+.x LDZ2 .y LDZ2 ADD2  ADD #18 DEO #0a18 DEO
+
+BRK ( The BRK instruction halts the program, a bit like System.exit in Java )
+
+@memory-label-1 ( You can give any memory address a label. This is usually used to create functions or to store constant strings. 
+
+)

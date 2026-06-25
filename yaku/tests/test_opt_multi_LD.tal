@@ -1,0 +1,11 @@
+|0100
+#0007 square
+BRK
+
+@square
+,&x STR2
+#0002 ,&x LDR2 ,&x LDR2 MUL2 MUL2
+#0003 ,&x LDR2 MUL2 ADD2
+#0005 ADD2
+JMP2r
+&x $2

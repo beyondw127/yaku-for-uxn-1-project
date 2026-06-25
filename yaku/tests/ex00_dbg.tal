@@ -1,0 +1,15 @@
+( Uxntal comments are enclosed in "( "  and " )" 
+
+This is an Uxntal program but the purpose is to explain the basics of the syntax. Please read `ex00_basics.md` first.
+
+) 
+
+|0000 ( People usually write this indicate the start of the memory region. )
+
+( to create a register, you write an @ followed by the name. Like a variable name, a register name in Uxntal can be anything )
+@x $2 ( The $2 means that we reserve 2 bytes for the content of this register )
+@y $2
+@long_reg_name $8 
+
+|0100 ( every program starts at address 256. the '|' means padding, it is a way to say that all memory before this line that is not used, should be filled with zeroes. )
+BRK

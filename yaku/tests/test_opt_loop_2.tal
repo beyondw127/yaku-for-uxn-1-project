@@ -1,0 +1,9 @@
+@i $1
+|100
+#00 .i STZ
+&loop
+.i LDZ #2a ADD #18 DEO
+.i LDZ INC .i STZ
+.i LDZ INC .i STZ
+.i LDZ #10 LTH ,&loop JCN
+BRK

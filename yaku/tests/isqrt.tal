@@ -1,0 +1,25 @@
+@isqrt ( num* -- sqrt* )
+    ,&num STR2
+    &start-while1 ,&bit LDR2 ,&num LDR2 GTH2 ?&while1
+       !&done1
+    	  &while1
+            ,&bit LDR2 #02 SFT2 ,&bit STR2
+	     !&start-while1
+  	&done1
+
+    &start-while2 ,&bit LDR2 #0000 NEQ2 ?&while2
+       !&done2
+    	  &while2
+            ,&num LDR2 ,&res LDR2 ,&bit LDR2 ADD2 LTH2 ?&ift
+                 ,&num LDR2 ,&res LDR2 ,&bit LDR2 ADD2 SUB2 ,&num STR2
+                 ,&res LDR2 #01 SFT2 ,&bit LDR2 ADD2 ,&res STR2
+                 !&if-done
+             &ift
+                  ,&res LDR2 #01 SFT2 ,&res STR2
+             &if-done
+            ,&bit LDR2 #02 SFT2 ,&bit STR2
+            ,&start-while2 JMP
+    &done2
+   ,&res LDR2
+JMP2r
+&num $2 &res $2 &bit 4000

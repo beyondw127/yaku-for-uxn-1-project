@@ -1,0 +1,87 @@
+( This is an test case for identifying functions )
+|0100 @main
+
+  #000a 
+  #0009 
+  #0008 
+  #0007 
+  #0006
+  #0005
+  #0004
+  #0003
+  #0002
+  #0001
+   ;f_2 JSR2
+;f_5 JSR2 #08 MUL 
+#18 DEO ( prints 'H' )
+BRK
+ 
+@f_1
+    MUL2  
+    &start
+    ADD2 
+    DUP2 DUP2 NIP
+    ( #00  )    
+    ,&start JCN    
+    MUL2        
+    DUP2 NIP
+    ( #00  )
+    ,&cont JCN
+    INC2
+    &cont
+    ADD2   
+    ;f_3 JMP2 
+    
+@f_2
+    ADD2 
+    ;f_1 JMP2 
+
+( This is interesting: 
+;f_4 JMP2 is actually a tailcall, and @l1 is a a function
+)
+@f_3
+    MUL2 
+    ;f_4 JMP2 
+    @l1
+    ADD2 
+    JMP2r    
+
+@f_4
+    INC2
+    #0002
+    MUL2 
+    ;l1 JMP2 
+
+@f_5
+    ADD2 SWP2 DIV2 
+    JMP2r
+
+@f_6
+    ADD2
+    ,l2 JCN
+    #0003
+    ;l3 JMP2
+    @l2
+        MUL2
+        ;l4 JMP2
+
+( So this is a multi-entry subroutine, we don't do that! )
+( To make it work we should split it, TODO! )
+( @l3
+    DIV2
+@l4
+    JMP2r )
+
+@l3
+    DIV2
+    JMP2r
+
+@l4
+    JMP2r
+
+
+@f_7
+    12 34 56 78
+
+@f_8
+    "Hello, 20 "World

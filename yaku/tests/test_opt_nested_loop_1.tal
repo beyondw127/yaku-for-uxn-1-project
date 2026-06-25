@@ -1,0 +1,23 @@
+|0100
+nested_loop_test_1
+BRK
+
+@nested_loop_test_1
+#00 ;&ii STA
+&loop1
+#00 ;&jj STA
+&loop2
+;&ii LDA ;&jj LDA ADD #30 ADD #18 DEO
+;&jj LDA INC ;&jj STA
+;&jj LDA #06 LTH 
+?&loop2
+#0a18 DEO
+;&ii LDA INC ;&ii STA
+;&ii LDA #05 LTH 
+?&loop1
+#0a18 DEO
+;&ii LDA #30 ADD #18 DEO #3b18 DEO ;&jj LDA #30 ADD #18 DEO
+#0a18 DEO
+JMP2r
+&ii $1
+&jj $1

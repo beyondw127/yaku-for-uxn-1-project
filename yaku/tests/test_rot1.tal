@@ -1,0 +1,15 @@
+|0100
+#0011
+#0022
+#0033
+;test JSR2
+NIP
+#18 DEO
+BRK
+
+@test
+ROT2
+ADD2
+ADD2
+JMP2r
+

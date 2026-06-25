@@ -1,0 +1,14 @@
+( Hello World Example )
+    |0100 ( -> )
+        ;hello-str ;print-str JSR2
+        BRK
+
+        @print-str ( str* -> )
+        &loop
+                DUP2 LDA DUP #00 EQU ?&end 
+                        #18 DEO 
+                        INC2 !&loop
+                            &end
+                                    POP POP2 JMP2r
+
+                                    @hello-str "Hello, 20 "World! 00

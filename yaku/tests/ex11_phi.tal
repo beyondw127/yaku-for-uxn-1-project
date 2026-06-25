@@ -1,0 +1,56 @@
+( This is an example of an Uxntal program that needs a phi function to implement a loop in SSA )
+( It uses a  library print function to print out shorts as decimal values )
+|0100 @main
+
+  #0010 ;loop JSR2
+  ( ;print16-dec JSR2 
+  ;nl JSR2 )
+BRK
+ 
+@loop
+    #0000 ( n 0 ) 
+    &For 
+    INC2 ( n counter )
+    DUP2 ( n counter counter )
+    ( because the print function removes the item from the stack )
+    ;print16-dec JSR2 ( n counter )
+    ( print a newline )
+    ;nl JSR2 ( n counter )
+    OVR2 OVR2 ( n counter n counter )
+    ( we duplicate n and the counter because NEQ2 will remove them both )
+    NEQ2  ( n counter bool )
+    ,&For JCN ( n counter )    
+    NIP2 ( remove n, keep counter )
+    JMP2r
+
+( ~../common-libs/print.tal )
+@nl 
+    #0a #18 DEO
+    JMP2r
+
+@print16-dec
+    DUP2 ( x:16 x:16 )
+    ( T = x/10000 )
+    #2710 DIV2 ( x:16 T:16 ) DUP #30 ADD #18 DEO
+    ( Dt = x - 10000*T )
+    #2710 MUL2 SUB2 ( Dt )
+    
+    DUP2 ( Dt Dt )
+    ( D = Dt / 1000 )
+    #03e8 DIV2 ( Dt D ) DUP #30 ADD #18 DEO
+    ( ht = Dt-D*1000 )
+    #03e8 MUL2 SUB2  ( ht )
+    
+    DUP2 ( ht ht )
+    ( h = ht /100 )
+    #0064 DIV2 ( ht h ) DUP #30 ADD #18 DEO
+    ( tt = ht - h*100 )
+    #0064 MUL2 SUB2 ( tt )
+    
+    DUP2 ( tt tt )
+    ( t = tt / 10 )
+    #000a DIV2 ( tt t ) DUP #30 ADD #18 DEO
+    ( e = tt - 10*t )
+    #000a MUL2 SUB2 ( e ) #30 ADD #18 DEO POP
+    
+    JMP2r

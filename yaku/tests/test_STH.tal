@@ -1,0 +1,4 @@
+|0100
+  #06 STH
+  #08 STHrk STHrk INC MUL #18 DEO POP POPr
+BRK

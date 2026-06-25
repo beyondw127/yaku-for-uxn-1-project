@@ -1,0 +1,59 @@
+( TODO: support multiple function pointers, assuming the order is preserved )
+|0000
+@x $2
+|0100
+
+#0404 ;f_2 #0202 ;f_1 #0101 ;hof JSR2
+( 0c0c )
+MUL #02 DIV
+#18 DEO ( prints 'H' )
+
+BRK
+
+( So let's say we consume the first item with a
+
+    
+
+and then swap 
+
+    a2 f2 a1 f1  
+
+    ROT2 ROT2 SWP2
+
+    a2 f1 a1 f2
+
+and then do a 
+
+    .x LDZ2
+
+So we'll have
+
+    a2 f1 a1 f2 x
+
+then we do 
+
+SWP2
+
+to have a2 f1 a1 x f2
+
+and then the call
+
+)
+@hof 
+    .x STZ2
+    ROT2 ROT2 SWP2
+    .x LDZ2
+    SWP2 
+    JSR2    
+    INC2 ( a2 f1 b )
+    SWP2 
+    JSR2 
+    JMP2r
+
+@f_1
+    MUL2
+    JMP2r
+
+@f_2    
+    DIV2
+    JMP2r

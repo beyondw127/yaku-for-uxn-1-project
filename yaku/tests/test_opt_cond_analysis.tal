@@ -1,0 +1,50 @@
+|0100
+test_opt_cond_analysis
+BRK
+
+@test_opt_cond_analysis
+(
+#2b ,&i STR 
+#00 ,&true_has_LDST JCN
+&false_no_LDST
+#2a18 DEO 
+LIT "F #18 DEO
+,&end_true_has_LDST JMP
+&true_has_LDST
+#2318 DEO 
+,&i LDR  #18 DEO
+&end_true_has_LDST
+)
+
+#2c ,&i STR
+#00 ,&true_no_LDST JCN
+&false_has_LDST
+,&i LDR #18 DEO
+,&end_true_no_LDST JMP
+&true_no_LDST
+LIT "T #18 DEO
+#2d18 DEO
+&end_true_no_LDST
+
+(
+#2e ,&i STR
+#00 ,&true_has_LDST2 JCN
+&false_has_LDST2
+,&i LDR #18 DEO
+,&end_true_has_LDST2 JMP
+&true_has_LDST2
+,&i LDR #18 DEO
+&end_true_has_LDST2
+
+#2f ,&i STR
+#00 ,&true_no_LDST2 JCN
+&false_no_LDST2
+LIT "F #18 DEO
+,&end_true_no_LDST2 JMP
+&true_no_LDST2
+LIT "T #18 DEO
+&end_true_no_LDST2
+)
+
+JMP2r
+&i $1

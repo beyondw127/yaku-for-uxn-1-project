@@ -1,0 +1,9 @@
+( ex24_cond_lambda.tal )
+|0100
+#01 ;test JSR2
+#00 ;test JSR2
+BRK
+
+@test
+    ?{ #3118 DEO JMP2r } #3018 DEO
+JMP2r

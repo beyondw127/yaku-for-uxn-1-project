@@ -1,0 +1,12 @@
+|0100
+#01 ;testJCN JSR2
+#00 ;testJCN JSR2
+BRK
+@testJCN
+,&true JCN
+LIT "F #18 DEO
+,&done JMP
+&true
+LIT "T #18 DEO
+&done
+JMP2r

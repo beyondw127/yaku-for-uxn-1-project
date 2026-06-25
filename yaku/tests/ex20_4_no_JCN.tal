@@ -1,0 +1,28 @@
+( This is an test case for loop )
+|0100 
+
+  #0003
+  #0002
+  ( #0001 )
+   ( ;f_1  )
+   ;f_2 JSR2 NIP #07 MUL
+#18 DEO ( prints 'F' )
+BRK
+ 
+( @f_1
+    MUL2 
+    ;start JMP2 )
+
+@f_2
+    ADD2 ( x )
+    DUP2 
+    
+    DUP2 ( x x x )
+    ( POP2 )
+    NIP POP
+    ( x x )
+    
+    ( POP2 )
+    ( ,&start JCN )    
+    ADD2 ( x )
+JMP2r

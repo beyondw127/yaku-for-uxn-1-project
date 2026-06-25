@@ -1,0 +1,45 @@
+|0100
+ test_opt_across_empty_if 
+BRK
+
+@test_opt_across_empty_if
+	#08 #07 #08 #07 
+	#2a ROT ROT 
+	INC EQU 
+	OVR STH2 ROT ROT STH2r POP 
+	?&if-true 
+	&if-false
+		MUL DUP
+		#38 EQU ROT SWP 
+		?&if-true3 
+		&if-false3
+ 			LIT 66 #18 DEO DUP
+ 			#18 DEO 
+		!&end-if3 
+		&if-true3
+			LIT 74 #18 DEO
+		&end-if3
+		DUP
+		#18 DEO LIT 61 #18 DEO 
+	!&end-if 
+	&if-true
+		MUL DUP
+		#38 EQU ROT SWP 
+		?&if-true2 
+		&if-false2
+			#4618 DEO 
+		!&end-if2 
+		&if-true2
+			LIT 54 #18 DEO DUP
+			#18 DEO
+			#5418 DEO
+		&end-if2
+		DUP
+		#18 DEO
+		#40 INC
+		#18 DEO
+	&end-if
+	#01 ROT ROT SUB MUL
+	#03 MUL	#18 DEO	#0a18 DEO 
+JMP2r
+

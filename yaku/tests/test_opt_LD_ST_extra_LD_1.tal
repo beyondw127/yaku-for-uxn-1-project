@@ -1,0 +1,12 @@
+( Case 1. iterative but with an extra LD on y )
+|0100
+#07 #02 #04 test_opt_LD_ST_extra_LD_1
+BRK
+
+@test_opt_LD_ST_extra_LD_1
+,&z STR ,&y STR ,&x STR
+,&x LDR ,&y LDR ,&z LDR ADD MUL ,&res STR
+,&y LDR INC ,&res LDR ADD
+JMP2r
+&x $1 &y $1 &z $1 &res $1
+

@@ -1,0 +1,12 @@
+( This is an example of an Uxntal program that needs a phi function to implement a loop in SSA )
+( It uses a  library print function to print out shorts as decimal values )
+|0100 @main
+  #0010 #0020 OVR2 OVR2 ( 10 20 10 20 ) 
+  ADD2 ( 10 20 30 ) 
+  MUL2 ( 10 600 ) 
+  SWP2 ( 600 10 ) 
+  DIV2 ( 60 ) 
+  #0036 SUB2  
+  #18 DEO
+BRK
+ 

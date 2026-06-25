@@ -1,0 +1,17 @@
+( This is a test case to debug mixed-size stack operations )
+
+|0100 @main
+
+#1234 #5678 #9abc 
+ROT   (  #1234 #56 #9abc #78 )
+
+ROT
+DUP POP
+ROT2 OVR2 
+ROT ROT POP NIP
+ROT2 ROT2 ROT 
+ADD2 ADD2 
+NIP
+#18 DEO
+
+BRK

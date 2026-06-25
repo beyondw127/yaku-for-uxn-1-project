@@ -1,0 +1,19 @@
+|0100
+
+#0004 ;f_1 #0102 ;hof JSR2
+( 0c0c ) 
+MUL #03 MUL
+#18 DEO ( prints 'l' )
+
+BRK
+
+@hof 
+    SWP2 
+    JSR2
+    INC2 
+    JMP2r
+
+@f_1
+    ( #0004 )
+    MUL2
+    JMP2r

@@ -1,0 +1,12 @@
+( This is an test case for jumps that keep the label )
+( What happens is that the label is pushed onto the stack before the jump )
+( So from the function perspective, it is the first element on the stack )
+|0100 @main
+
+#1019
+( NIP )
+#3b ADD  
+ADD
+ #18 DEO 
+BRK
+

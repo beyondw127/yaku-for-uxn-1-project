@@ -1,0 +1,17 @@
+
+|0100
+
+#06
+#07
+( ;hello  )
+#002a
+@main/while
+( LDA  )
+NIP #18 DEO
+( SUB    )
+( ;main/while JCN2 )
+MUL #18 DEO
+BRK
+
+@hello
+"hello

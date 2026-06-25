@@ -1,0 +1,12 @@
+(
+ Dynamic memory allocation using pages, a bitmap and an allocation map
+)
+
+|0000
+( I suggest you use the zero page for temporary storage )
+@idx $2 @jj $2
+@n_pages $2
+@byte_idx $2
+@bit_idx $2
+@byte $1
+@error $1

@@ -1,0 +1,16 @@
+|0100
+simple-loop
+BRK
+
+@simple-loop
+#00 DUP DUP ( i i i )
+&loop
+ #20 ADD #18 DEO
+ #08 EQU ,&done JCN
+ INC DUP DUP
+,&loop JMP
+&done
+
+JMP2r
+&i $1
+( So the rule is simply that the ST before the JMP must be replace by the same seq as the first ST )

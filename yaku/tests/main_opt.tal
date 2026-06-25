@@ -1,0 +1,164 @@
+ |0000
+@System $2 $2 $1 $1 $2 $2 $2 $2 $1 
+&state
+ $1
+|0100
+ main 
+BRK
+
+@main
+ #0001 #0002 #0003 g print-int #2018 DEO
+ #0a18 DEO
+ POP2r
+ exit 
+BRK
+
+@g
+ SWP2
+ ROT2
+ OVR2
+ STH2
+ ROT2
+ STH2r
+ SWP2
+ ADD2
+ mul2 SWP2
+ #0001 ADD2
+ SWP2
+ ADD2
+ JMP2r
+
+@exit
+ ( POP2 )
+ #80 .System/state DEO
+ POP2r
+ 
+BRK
+
+@fmt-dec-short
+ DUP2
+ n-dec-digits-in-short DUP
+ #01 EQU
+ ?&done ,&n-dig STR
+ #01 
+&loop
+ ROT
+ ROT
+ DUP2
+ #000a DIV2
+ DUP2
+ #000a MUL2
+ ROT2
+ SWP2
+ SUB2
+ NIP
+ #30 ADD
+ ROT
+ ROT
+ SWP2
+ SWP
+ SWP2
+ ROT
+ INC
+ DUP
+ LIT
+ 
+&n-dig
+ $1 LTH
+ ?&loop 
+&done
+ ROT
+ ROT
+ NIP
+ #30 ADD
+ SWP
+ JMP2r
+
+@mul2
+ OVR2
+ OVR2
+ #8000 LTH2
+ STH
+ #8000 LTH2
+ STH
+ ANDrk
+ STHr
+ ?&pp ORArk
+ STHr
+ #01 SWP
+ SUB
+ ?&mm STH2r
+ #01 SWP
+ SUB
+ AND
+ ?&mp !&pm 
+&mp
+ SWP2
+ 
+&pm
+ neg2 MUL2
+ !neg2 
+&mm
+ neg2 neg2 
+&pp
+ MUL2
+ POP2r
+ JMP2r
+
+@n-dec-digits-in-short
+ DUP2
+ #0000 EQU2
+ ?&is_zero #2710 #0005 
+&loop
+ ROT2
+ ROT2
+ DIV2k
+ #0000 NEQ2
+ ?&done_loop #000a DIV2
+ ROT2
+ #0001 SUB2
+ !&loop 
+&is_zero
+ #01 JMP2r
+ 
+&done_loop
+ POP2
+ POP2
+ NIP
+ JMP2r
+
+@neg2
+ #0000 SWP2
+ SUB2
+ JMP2r
+
+@print-int
+ DUP2
+ #0000 EQU2
+ ?&zero fmt-dec-short { #18 DEO
+ JMP2r
+ } STH2r
+ !proc-n-items-from-ws 
+&zero
+ POP2
+ #3018 DEO
+ JMP2r
+
+@proc-n-items-from-ws
+ ROT
+ STHk
+ 
+&loop
+ #00 EQU
+ ?&end STH2k
+ JSR2
+ STH2r
+ STHr
+ #01 SUB
+ STHk
+ !&loop 
+&end
+ POPr
+ POP2
+ JMP2r
+ 0000

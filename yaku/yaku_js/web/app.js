@@ -1,0 +1,437 @@
+
+import { mainForWeb } from './lib/Yaku.js';
+import { toHex } from './lib/Yaku/Uxntal/PrettyPrint.js';
+import { examples } from './lib/ExamplesForApp.js';
+console.log('Yaku Web App Starting...');
+
+(function() {
+    
+    'use strict';
+    
+    // 示例程序库
+    const examples_ = {
+
+    
+        'hello-world-2': {
+            name: 'Hello World',
+            code: `( Hello World Example )
+|0100 ( -> )
+    ;hello-str ;print-str JSR2
+BRK
+
+@print-str ( str* -> )
+    &loop
+        DUP2 LDA DUP #00 EQU ,&end JCN
+        #18 DEO 
+        INC2 ,&loop JMP
+    &end
+        POP POP2 JMP2r
+
+@hello-str "Hello, 20 "World! 00`
+        },
+        'simple-calc': {
+            name: 'Simple Calculation',
+            code: `( Simple Calculation )
+
+|0100
+
+@main
+    #06 #07 MUL  ( 6 * 7 = 42 )
+    #18 DEO      ( Output '*' )
+    #0a #18 DEO  ( Output newline )
+    BRK`
+        },
+        'fibonacci': {
+            name: 'Fibonacci Sequence',
+            code: `( Fibonacci Example )
+
+|0100
+
+@main
+    #06 ;fibonacci JSR2  ( Calculate fib(6) )
+    #30 ADD #18 DEO     ( Convert to ASCII and output )
+    BRK
+
+@fibonacci ( n -> fib_n )
+    DUP #02 LTH ,&base-case JCN
+    DUP #01 SUB ,fibonacci JSR
+    SWP #02 SUB ,fibonacci JSR
+    ADD JMP2r
+    &base-case JMP2r`
+        },
+        'memory-access': {
+            name: 'Memory Access',
+            code: `( Memory Access )
+
+|0100
+
+@main
+    #2a ;data STA    ( Store 42 in memory )
+    ;data LDA        ( Load from memory )
+    #18 DEO          ( Output the value )
+    BRK
+
+|0200
+@data $1`
+        }
+    };
+    
+    var programFile='from-yaku.tal'
+    // 等待 DOM 加载
+    function initApp() {
+        console.log('DOM loaded');
+        
+        // 获取所有元素
+        const executeBtn = document.getElementById('execute-btn');
+        const clearBtn = document.getElementById('clear-output');
+        const downloadRomBtn = document.getElementById('download-rom');
+        const codeEditor = document.getElementById('code-editor');
+        const fileInput = document.getElementById('file-input');
+        const loadFileBtn = document.getElementById('load-file-btn');
+        const saveFileBtn = document.getElementById('save-file-btn');
+        const exampleSelect = document.getElementById('example-select');
+        
+        const consoleOutput = document.getElementById('console-output');
+        const assemblyOutput = document.getElementById('assembly-output');
+        const memoryOutput = document.getElementById('memory-output');
+        const stacksOutput = document.getElementById('stacks-output');
+        
+        // 标签页按钮
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const outputPanes = document.querySelectorAll('.output-pane');
+        
+        let yakuState = null;
+        
+        // 文件操作功能
+        function setupFileOperations() {
+            // Load File 按钮
+            if (loadFileBtn && fileInput) {
+                loadFileBtn.onclick = function() {
+                    fileInput.click();
+                };
+                
+                fileInput.onchange = function(event) {
+                    const file = event.target.files[0];
+                    if (!file) return;
+                    
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        codeEditor.value = e.target.result;
+                        addOutput('info', 'File loaded: ' + file.name);
+                        programFile = file.name;
+                    };
+                    reader.readAsText(file);
+                };
+            }
+            
+            // Save File 按钮
+            if (saveFileBtn) {
+                saveFileBtn.onclick = function() {
+                    const code = codeEditor.value;
+                    const blob = new Blob([code], { type: 'text/plain' });
+                    const url = URL.createObjectURL(blob);
+                    
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = programFile;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    
+                    addOutput('info', 'File saved as '+programFile);
+                };
+            }
+            
+            // Example 下拉菜单
+            if (exampleSelect) {
+                exampleSelect.onchange = function() {
+                    const selectedExample = this.value;
+                    if (selectedExample && examples[selectedExample]) {
+                        codeEditor.value = examples[selectedExample].code;
+                        addOutput('info', 'Loaded example: ' + examples[selectedExample].name);
+                        programFile = examples[selectedExample].name.replace(/\s/g,'-')+'.tal';                        
+                        this.value = ''; // 重置选择
+                    }
+                };
+            }
+            
+            // Download ROM 按钮
+            if (downloadRomBtn) {
+                downloadRomBtn.onclick = function() {
+                    if (!yakuState.webState.romContent) {
+                        addOutput('error', 'No ROM data available');
+                        return;
+                    }
+                    
+                    // const blob = new Blob([currentRomData], { type: 'application/octet-stream' });
+                    // const url = URL.createObjectURL(yakuState.webState.romFile);
+                    
+                    const a = document.createElement('a');
+                    a.href = yakuState.webState.romContent;
+                    a.download = yakuState.webState.romFile;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(yakuState.webState.romContent);
+                    
+                    addOutput('info', 'ROM file downloaded as '+yakuState.webState.romFile);
+                };
+            }
+        }
+        
+        // 标签页切换功能
+        function setupTabs() {
+            tabBtns.forEach(function(btn) {
+                btn.onclick = function() {
+                    const targetTab = this.getAttribute('data-tab');
+                    
+                    // 更新按钮状态
+                    tabBtns.forEach(function(b) { 
+                        b.classList.remove('active'); 
+                    });
+                    this.classList.add('active');
+                    
+                    // 更新面板显示
+                    outputPanes.forEach(function(pane) {
+                        pane.classList.remove('active');
+                        if (pane.id === targetTab + '-output') {
+                            pane.classList.add('active');
+                        }
+                    });
+                };
+            });
+        }
+        
+        function addOutput(type, message) {
+            try {
+                const content = consoleOutput.querySelector('.output-content');
+                // const timestamp = new Date().toLocaleTimeString();
+                const className = type === 'error' ? ' style="color: #ff073a;"' : 
+                                type  === 'warning' ? ' style="color: #f500ff;"' : 
+                                // WV: was f5ff for dark theme
+                                type === 'info' ? ' style="color:rgb(85, 0, 255);"' : 
+                                // was 39ff14 for dark theme
+                                type === 'success' ? ' style="color:rgb(48, 141, 32);"' : 
+                                // WV: was ffffff for dark theme
+                                type === 'programOutput' ? ' style="color: #000000;"' : 
+                                '';
+                
+                if (content.textContent === 'Ready to execute Uxntal code...') {
+                    content.textContent = '';
+                }
+                
+                content.innerHTML += '<span' + className + '>' + message + '</span>\n';
+                // content.innerHTML += '<span' + className + '>[' + timestamp + '] ' + message + '</span>\n';
+                content.scrollTop = content.scrollHeight;
+            } catch (e) {
+                console.log('Output:', message);
+            }
+        }
+        
+        function updateAssemblyOutput(code) {
+            try {
+                const content = assemblyOutput.querySelector('.output-content');
+                let output = "Assembly Analysis:\n==================\n\n";
+                
+                const lines = code.split('\n');
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i];
+                    const trimmed = line.trim();
+                    if (trimmed && !trimmed.startsWith('(')) {
+                        output += (i + 1).toString().padStart(3, ' ') + ': ' + line + '\n';
+                    }
+                }
+                
+                content.textContent = output;
+            } catch (e) {
+                console.log('Assembly update failed',e);
+            }
+        }
+        
+        function updateMemoryOutput() {
+            try {
+                const content = memoryOutput.querySelector('.output-content');
+                const output = "Memory Layout:\n=============\n\nAddress | Hex Data | Description  \n--------|----------|------------\n0100    | 80 2A    | LIT #42\n0102    | 18       | DEO (output)\n0103    | 00       | BRK\n0104    | --       | (unused)\n0105    | --       | (unused)\n\nMemory Usage: 4 bytes\nProgram Counter: 0100\nStatus: Ready";
+                
+                content.textContent = output;
+            } catch (e) {
+                console.log('Memory update failed');
+            }
+        }
+        
+        function updateStacksOutput() {
+            try {
+                const content = stacksOutput.querySelector('.output-content');
+                
+                var stacksStr = "Working Stack (WS): [ ";
+                for (const t of yakuState.Uxn.stacks[0]) { 
+                    stacksStr+=`${toHex(t[0], t[1])} `;
+                }
+                stacksStr+=" ]\n";
+                stacksStr+="Return Stack (RS): [ ";
+                for (const t of yakuState.Uxn.stacks[1]) {
+                    stacksStr+=`${toHex(t[0], t[1])} `;
+                }
+                stacksStr+=" ]\n";
+                // var stacksStr = "Stack Information:\n==================\n\n";
+                // stacksStr+="Working Stack (WS): [\n";
+                // for (const t of yakuState.Uxn.stacks[0]) {
+                //     stacksStr+=`\t${toHex(t[0], t[1])}\t(${t[1] === 1 ? 'byte' : 'short'} ${t[0]})`;
+                // }
+                // stacksStr+="\t]\n";
+                // stacksStr+="Return Stack (RS): [\n";
+                // for (const t of yakuState.Uxn.stacks[1]) {
+                //     stacksStr+=`\t${toHex(t[0], t[1])}\t(${t[1] === 1 ? 'byte' : 'short'} ${t[0]})`;
+                // }
+
+
+                // const output = "Stack Information:\n==================\n\nWorking Stack (WS):\n  [empty]\n\nReturn Stack (RS):\n  [empty]\n\nProgram Counter: 0103 (after BRK)\nStack Pointers: WS=00, RS=00\nLast Operation: DEO (Device Output)\nOutput Port: #18 (Console)\nOutput Value: #42 ('*')\n\nStatus: Program completed successfully";
+                
+                content.textContent = stacksStr;
+            } catch (e) {
+                console.log('Stacks update failed'+e);
+            }
+        }
+
+        function clearOutput() {
+            try {
+                // 清除所有输出面板
+                const allContents = document.querySelectorAll('.output-content');
+                allContents.forEach(function(content) {
+                    if (content.closest('#console-output')) {
+                        content.textContent = 'Ready to execute Uxntal code...';
+                    } else {
+                        content.textContent = '';
+                    }
+                });
+                
+                // 隐藏 ROM 下载按钮
+                // currentRomData = null;
+                if (downloadRomBtn) {
+                    downloadRomBtn.style.display = 'none';
+                }
+            } catch (e) {
+                console.log('Clear failed',e);
+            }
+        }
+        
+        // 执行按钮事件
+        if (executeBtn) {
+            executeBtn.onclick = function() {
+                console.log('Execute clicked');
+                const code = codeEditor ? codeEditor.value.trim() : '';
+                
+                
+                if (!code) {
+                    addOutput('error', 'No code to execute');
+                    return;
+                }
+                
+                addOutput('info', 'Starting execution...');
+                clearOutput();
+                
+                // 获取选项
+                let assembleChecked = false;
+                let runChecked = false;
+                // let printChecked = false;
+                let fewerWarningsChecked = false;
+                // let showStacksChecked = true;
+                
+                try {
+                    assembleChecked = document.getElementById('option-assemble').checked;
+                    runChecked = document.getElementById('option-run').checked;
+                    // printChecked = document.getElementById('option-print').checked;
+                    // showStacksChecked = document.getElementById('option-show-stacks').checked;
+                    fewerWarningsChecked = document.getElementById('option-warnings').checked;
+                } catch (e) {
+                    console.log('Option check failed: '+assembleChecked+runChecked);
+                }
+                var opts = { r: runChecked, a: assembleChecked, W: fewerWarningsChecked };
+                yakuState = mainForWeb(programFile,code,opts);
+               
+                if (assembleChecked) {
+                    addOutput('success', 'Assembly completed successfully');
+                    // updateAssemblyOutput(code);
+                    // updateMemoryOutput();
+                    
+                    // 模拟生成ROM数据
+                    // currentRomData = new Uint8Array([0x80, 0x42, 0x18, 0x00]);
+                    if (downloadRomBtn) {
+                        downloadRomBtn.style.display = 'inline-flex';
+                    }
+                }
+                
+                if (runChecked) {                    
+                    if (yakuState.webState.warningsBuffer.length>0){
+                        addOutput('warning',yakuState.webState.warningsBuffer);}
+                    if (yakuState.webState.errorsBuffer.length>0){
+                        addOutput('error',yakuState.webState.errorsBuffer);
+                    } else {
+                        addOutput('success', 'Program executed successfully');
+                        addOutput('success', 'Program output: ');
+                        addOutput('programOutput',yakuState.webState.outputBuffer);
+                        // if (showStacksChecked) {
+                            // }
+                    }
+                    updateStacksOutput();
+                    // if (code.indexOf('#42') !== -1) {
+                    //     addOutput('success', 'Program output: *');
+                    // } else if (code.indexOf('Hello') !== -1) {
+                    //     addOutput('success', 'Program output: Hello, World!');
+                    // } else {
+                    //     addOutput('success', 'Program output: (no visible output)');
+                    // }
+                    
+                }
+                
+                // if (printChecked) {
+                //     addOutput('info', 'Code structure printed');
+                // }
+            };
+        }
+        
+        // 清除按钮事件
+        if (clearBtn) {
+            clearBtn.onclick = function() {
+                console.log('Clear output clicked');
+                
+                try {
+                    // 清除所有输出面板
+                    const allContents = document.querySelectorAll('.output-content');
+                    allContents.forEach(function(content) {
+                        if (content.closest('#console-output')) {
+                            content.textContent = 'Ready to execute Uxntal code...';
+                        } else {
+                            content.textContent = 'Output will appear here after execution...';
+                        }
+                    });
+                    
+                    // 隐藏 ROM 下载按钮
+                    currentRomData = null;
+                    if (downloadRomBtn) {
+                        downloadRomBtn.style.display = 'none';
+                    }
+                } catch (e) {
+                    console.log('Clear failed');
+                }
+            };
+        }
+        
+        // 初始化所有功能
+        setupFileOperations();
+        setupTabs();
+        
+        console.log('Yaku Web Interface ready with file operations!');
+    }
+    
+    // 确保 DOM 加载完成
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initApp);
+    } else {
+        initApp();
+    }
+    
+})();
+
+console.log('Yaku Web App loaded with file support');

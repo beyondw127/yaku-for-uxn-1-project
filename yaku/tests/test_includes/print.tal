@@ -1,0 +1,121 @@
+
+
+( ==================================================== )
+( Functions for printing )
+@todo { 0005 "TODO 0a } STH2r print-str JMP2r
+
+@print-bit #30 ADD #18 DEO JMP2r
+@nl #0a18 DEO JMP2r
+@ws #2018 DEO JMP2r
+
+
+@print8 ( b -: )
+    DUP ( b b )
+    lonib ( b ln )
+    h2a ( b lna )
+    SWP ( lna b )
+    hinib ( lna hn )
+    h2a ( lna hna )
+    #18 DEO #18 DEO
+    JMP2r
+
+@print16 ( a* -: )
+    SWP
+    print8
+    print8
+    JMP2r
+
+@lonib ( a -: b )
+    #0f AND
+    JMP2r
+
+@hinib ( a -: b )
+    #04 SFT
+    JMP2r
+
+@h2a ( a -: b )
+    DUP ( a a )
+    #0a LTH ( a c1 )
+    DUP ( a c1 c1 )
+    #01 SWP SUB ( a c1 1-c1 )
+    #57 MUL ( a c1 [1-c1]*57 )
+    SWP ( a [1-c1]*57 c1 )
+    #30 MUL ( a [1-c1]*57 c1*30 )
+    ADD 
+    ADD ( a+[1-c1]*57+c1*30 )
+    JMP2r
+
+( To print a 1-byte unsigned integer 
+as a decimal number of 3 digits )
+( a -: )
+@print8-dec
+( h = x/100 )
+DUP ( x x ) 
+DUP #64  LTH ,&d2 JCN 
+#64 DIV ( x h ) DUP #30 ADD #18 DEO ( x h )
+( d = x - 100*h )
+#64 MUL SUB ( d )
+( t = d / 10 )
+DUP ( d d )
+&d2
+DUP #0a  LTH ,&d3 JCN
+#0a DIV ( d t ) DUP #30 ADD #18 DEO ( d t )
+( e = d - 10*t )
+#0a MUL SUB ( e ) 
+DUP ( e e )
+&d3
+#30 ADD #18 DEO
+POP
+JMP2r
+( To print a 2-byte unsigned integer 
+as a decimal number of 5 digits )
+( x:16 -> -- )
+( x* -: )
+@print16-dec
+    DUP2 ( x:16 x:16 )
+    DUP2 #2710 LTH2 ,&d2 JCN
+    ( T = x/10000 )
+    #2710 DIV2 ( x:16 T:16 ) DUP #30 ADD #18 DEO
+    ( Dt = x - 10000*T )
+    #2710 MUL2 SUB2 ( Dt )
+    DUP2 ( Dt Dt )
+    &d2
+    DUP2 #03e8  LTH2 ,&d3 JCN
+    ( D = Dt / 1000 )
+    #03e8 DIV2 ( Dt D ) DUP #30 ADD #18 DEO
+    ( ht = Dt-D*1000 )
+    #03e8 MUL2 SUB2  ( ht )
+    DUP2 ( ht ht )
+    &d3
+    DUP2 #0064  LTH2 ,&d4 JCN
+    ( h = ht /100 )
+    #0064 DIV2 ( ht h ) DUP #30 ADD #18 DEO
+    ( tt = ht - h*100 )
+    #0064 MUL2 SUB2 ( tt )
+    DUP2 ( tt tt )
+    &d4
+    ( t = tt / 10 )
+    #000a DIV2 ( tt t ) DUP #30 ADD #18 DEO
+    ( e = tt - 10*t )
+    #000a MUL2 SUB2 ( e ) #30 ADD #18 DEO POP
+    JMP2r
+
+( To print a string )
+( The string starts with a 2-byte lenght field )
+@print-str ( a* -: )
+    LDA2k ( ;str size )
+    SWP2 #0002 ADD2 SWP2 ( ;str+2 size )
+    DUP2 ( ;str+2 size size )
+    ( So we test if that is 0 and if not we keep going )
+    &loop
+    #0000 EQU2 ,&exit JCN ( ;str+2 size )
+    SWP2 ( size ;str+2 )
+    LDAk #18 DEO ( size ;str+2 )
+    INC2 SWP2 #0001 SUB2 DUP2 ( ;str+3 size-1 size-1 )
+    ,&loop JMP
+    &exit
+    POP2 POP2 POP2
+    JMP2r
+    
+( END of functions for printing and strings )
+( ==================================================== )

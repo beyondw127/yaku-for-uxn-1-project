@@ -1,0 +1,35 @@
+So if we have 
+
+,&child_label 
+JMP 
+<next_instr_address>
+
+
+&child_label <child_label_absolute_address>
+
+then this will become
+LIT
+<child_label_absolute_address>-<next_instr_address>
+JMP
+
+and if we have 
+
+
+&child_label <child_label_absolute_address>
+...
+
+,&child_label 
+JMP 
+<next_instr_address>
+
+then we have 
+
+LIT
+256 - <next_instr_address> + <child_label_absolute_address>
+JMP
+
+
+
+
+
+

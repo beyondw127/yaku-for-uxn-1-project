@@ -1,0 +1,538 @@
+ |0000 
+@idx $2
+@jj $2
+@n_pages $2
+@byte_idx $2
+@bit_idx $2
+@byte $1
+@error $1
+|0100
+ test-mask_clear test-mask_set test-get_bit test-clear_bit test-set_bit set-bitmap-B hr test-alloc_sz_is_free_at_idx test-claim_alloc_sz_at_idx test-free_alloc_sz_at_idx test-malloc test-free 
+BRK
+
+@test-mask_clear
+ { 001d 54 65 73 74 20 66 6f 72 20 6d 61 73 6b 5f 63 6c 65 61 72 28 62 69 74 5f 69 64 78 29 0a } STH2r print-str #0000 mask_clear #fe EQU print-Python-bool nl #0001 mask_clear #fd EQU print-Python-bool nl #0002 mask_clear #fb EQU print-Python-bool nl #0003 mask_clear #f7 EQU print-Python-bool nl #0004 mask_clear #ef EQU print-Python-bool nl #0005 mask_clear #df EQU print-Python-bool nl #0006 mask_clear #bf EQU print-Python-bool nl #0007 mask_clear #7f EQU print-Python-bool nl hr JMP2r
+@test-mask_set
+ { 001b 54 65 73 74 20 66 6f 72 20 6d 61 73 6b 5f 73 65 74 28 62 69 74 5f 69 64 78 29 0a } STH2r print-str #0000 mask_set #01 EQU print-Python-bool nl #0001 mask_set #02 EQU print-Python-bool nl #0002 mask_set #04 EQU print-Python-bool nl #0003 mask_set #08 EQU print-Python-bool nl #0004 mask_set #10 EQU print-Python-bool nl #0005 mask_set #20 EQU print-Python-bool nl #0006 mask_set #40 EQU print-Python-bool nl #0007 mask_set #80 EQU print-Python-bool nl hr JMP2r
+@test-get_bit
+ { 0016 54 65 73 74 20 66 6f 72 20 67 65 74 5f 62 69 74 28 69 64 78 29 0a } STH2r print-str set-bitmap-A #0010 get_bit #00 EQU
+ #000f get_bit #01 EQU AND print-Python-bool nl #0018 get_bit #01 EQU
+ #0019 get_bit #00 EQU AND print-Python-bool nl #0026 get_bit #01 EQU
+ #0027 get_bit #00 EQU AND print-Python-bool nl #0041 get_bit #01 EQU
+ #0042 get_bit #01 EQU AND print-Python-bool nl #0065 get_bit #01 EQU
+ #0066 get_bit #00 EQU AND print-Python-bool nl #006a get_bit #01 EQU
+ #006b get_bit #00 EQU AND print-Python-bool nl set-bitmap-B #0010 get_bit #00 EQU
+ #000f get_bit #01 EQU AND print-Python-bool nl #0018 get_bit #01 EQU
+ #0019 get_bit #01 EQU AND print-Python-bool nl #0026 get_bit #01 EQU
+ #0025 get_bit #01 EQU AND print-Python-bool nl #0041 get_bit #01 EQU
+ #0042 get_bit #01 EQU AND print-Python-bool nl #0064 get_bit #01 EQU
+ #0065 get_bit #01 EQU AND print-Python-bool nl #006a get_bit #01 EQU
+ #006b get_bit #01 EQU AND print-Python-bool nl hr JMP2r
+@test-clear_bit
+ { 0018 54 65 73 74 20 66 6f 72 20 63 6c 65 61 72 5f 62 69 74 28 69 64 78 29 0a } STH2r print-str #000f clear_bit #000e clear_bit #0018 clear_bit #0019 clear_bit #0026 clear_bit #0027 clear_bit #0041 clear_bit #0042 clear_bit #0065 clear_bit #0066 clear_bit #006a clear_bit #006b clear_bit #000f get_bit #00 EQU
+ #000e get_bit #00 EQU AND print-Python-bool nl #0018 get_bit #00 EQU
+ #0019 get_bit #00 EQU AND print-Python-bool nl #0026 get_bit #00 EQU
+ #0027 get_bit #00 EQU AND print-Python-bool nl #0041 get_bit #00 EQU
+ #0042 get_bit #00 EQU AND print-Python-bool nl #0065 get_bit #00 EQU
+ #0066 get_bit #00 EQU AND print-Python-bool nl #006a get_bit #00 EQU
+ #006b get_bit #00 EQU AND print-Python-bool nl hr JMP2r
+@test-set_bit
+ { 0016 54 65 73 74 20 66 6f 72 20 73 65 74 5f 62 69 74 28 69 64 78 29 0a } STH2r print-str #000f set_bit #000e set_bit #0018 set_bit #0019 set_bit #0026 set_bit #0027 set_bit #0041 set_bit #0042 set_bit #0065 set_bit #0066 set_bit #006a set_bit #006b set_bit #000f get_bit #01 EQU
+ #000e get_bit #01 EQU AND print-Python-bool nl #0018 get_bit #01 EQU
+ #0019 get_bit #01 EQU AND print-Python-bool nl #0026 get_bit #01 EQU
+ #0027 get_bit #01 EQU AND print-Python-bool nl #0041 get_bit #01 EQU
+ #0042 get_bit #01 EQU AND print-Python-bool nl #0065 get_bit #01 EQU
+ #0066 get_bit #01 EQU AND print-Python-bool nl #006a get_bit #01 EQU
+ #006b get_bit #01 EQU AND print-Python-bool nl hr JMP2r
+@test-alloc_sz_is_free_at_idx
+ { 002f 54 65 73 74 20 66 6f 72 20 61 6c 6c 6f 63 5f 73 7a 5f 69 73 5f 66 72 65 65 5f 61 74 5f 69 64 78 28 69 64 78 2c 61 6c 6c 6f 63 5f 73 7a 29 0a } STH2r print-str { 0006 70 61 72 74 31 0a } STH2r print-str #000f #0001 alloc_sz_is_free_at_idx #00 EQU print-Python-bool nl #000f #0002 alloc_sz_is_free_at_idx #00 EQU print-Python-bool nl #000f #0004 alloc_sz_is_free_at_idx #00 EQU print-Python-bool nl #000f #0008 alloc_sz_is_free_at_idx #00 EQU print-Python-bool nl #000f #0010 alloc_sz_is_free_at_idx #00 EQU print-Python-bool nl { 0006 70 61 72 74 32 0a } STH2r print-str #0010 #0001 alloc_sz_is_free_at_idx #01 EQU print-Python-bool nl #0010 #0002 alloc_sz_is_free_at_idx #01 EQU print-Python-bool nl #0010 #0004 alloc_sz_is_free_at_idx #01 EQU print-Python-bool nl #0010 #0008 alloc_sz_is_free_at_idx #01 EQU print-Python-bool nl #0010 #0010 alloc_sz_is_free_at_idx #00 EQU print-Python-bool nl { 0006 70 61 72 74 33 0a } STH2r print-str #0011 #0001 alloc_sz_is_free_at_idx #01 EQU print-Python-bool nl #0011 #0002 alloc_sz_is_free_at_idx #01 EQU print-Python-bool nl #0011 #0004 alloc_sz_is_free_at_idx #01 EQU print-Python-bool nl #0011 #0008 alloc_sz_is_free_at_idx #00 EQU print-Python-bool nl #0011 #0010 alloc_sz_is_free_at_idx #00 EQU print-Python-bool nl { 0006 70 61 72 74 34 0a } STH2r print-str #006c #0001 alloc_sz_is_free_at_idx #01 EQU print-Python-bool nl #006c #0002 alloc_sz_is_free_at_idx #01 EQU print-Python-bool nl #006c #0004 alloc_sz_is_free_at_idx #01 EQU print-Python-bool nl #006c #0008 alloc_sz_is_free_at_idx #01 EQU print-Python-bool nl #006c #0010 alloc_sz_is_free_at_idx #01 EQU print-Python-bool nl JMP2r
+@test-claim_alloc_sz_at_idx
+ { 002d 54 65 73 74 20 66 6f 72 20 63 6c 61 69 6d 5f 61 6c 6c 6f 63 5f 73 7a 5f 61 74 5f 69 64 78 28 69 64 78 2c 61 6c 6c 6f 63 5f 73 7a 29 0a } STH2r print-str ;bitmap LDA2 STH2 { 0006 70 61 72 74 31 0a } STH2r print-str #0000 ;bitmap STA2 #0000 #0001 claim_alloc_sz_at_idx 0x ;bitmap LDA DUP print8 ws #80 EQU print-Python-bool nl #0001 #0002 claim_alloc_sz_at_idx 0x ;bitmap LDA DUP print8 ws #e0 EQU print-Python-bool nl #0003 #0003 claim_alloc_sz_at_idx 0x ;bitmap LDA DUP print8 ws #fc EQU print-Python-bool nl #0006 #0004 claim_alloc_sz_at_idx 0x ;bitmap LDA DUP print8 ws 0x ;bitmap INC LDA DUP print8 ws #ffc0 EQU2 print-Python-bool nl #000a #0005 claim_alloc_sz_at_idx 0x ;bitmap LDA DUP print8 ws 0x ;bitmap INC LDA DUP print8 ws #fffe EQU2 print-Python-bool nl STH2r ;bitmap STA2 { 0006 70 61 72 74 32 0a } STH2r print-str #006c #0010 claim_alloc_sz_at_idx #007c #0010 alloc_sz_is_free_at_idx #01 EQU print-Python-bool nl #006c #0010 alloc_sz_is_free_at_idx #00 EQU print-Python-bool nl JMP2r
+@test-free_alloc_sz_at_idx
+ { 002c 54 65 73 74 20 66 6f 72 20 66 72 65 65 5f 61 6c 6c 6f 63 5f 73 7a 5f 61 74 5f 69 64 78 28 69 64 78 2c 61 6c 6c 6f 63 5f 73 7a 29 0a } STH2r print-str #006c #0010 free_alloc_sz_at_idx #007c #0010 alloc_sz_is_free_at_idx print-Python-bool nl #006c #0010 alloc_sz_is_free_at_idx print-Python-bool nl JMP2r
+@test-malloc
+ { 001a 54 65 73 74 20 66 6f 72 20 6d 61 6c 6c 6f 63 28 61 6c 6c 6f 63 5f 73 7a 29 0a } STH2r print-str reset MAX_ALLOC_SZ malloc ;&ptr STA2 ;&ptr LDA2 #0000 NEQ2 print-Python-bool nl ;&ptr LDA2 free get-error #00 EQU
+ ,&cont JCN
+ #00 print-Python-bool nl 
+&cont
+ reset MAX_ALLOC_SZ #0002 MUL2 INC2 malloc ;&ptr STA2 ;&ptr LDA2 #0000 EQU2 get-error #07 EQU AND print-Python-bool nl reset #0000 malloc ;&ptr STA2 ;&ptr LDA2 #0000 EQU2 get-error #01 EQU AND print-Python-bool nl #0001 malloc ;&ptr STA2 ;&ptr LDA2 #0000 NEQ2 get-error #00 EQU AND print-Python-bool nl #0010 malloc ;&ptr STA2 ;&ptr LDA2 free get-error #00 EQU print-Python-bool nl JMP2r 
+&ptr
+ $2
+@test-free
+ { 0013 54 65 73 74 20 66 6f 72 20 66 72 65 65 28 70 74 72 29 0a } STH2r print-str reset #0000 free get-error #02 EQU print-Python-bool nl reset DMEM_START free get-error #06 EQU print-Python-bool nl DMEM_START #0001 SUB2 free get-error #02 EQU print-Python-bool nl #ffff free get-error #06 EQU print-Python-bool nl #0010 malloc ;&ptr STA2 ;&ptr LDA2 free get-error #00 EQU print-Python-bool nl JMP2r 
+&ptr
+ $2
+@set-bitmap-A
+ #01 ;bitmap #0001 ADD2 STA
+ #80 ;bitmap #0003 ADD2 STA
+ #02 ;bitmap #0004 ADD2 STA
+ #60 ;bitmap #0008 ADD2 STA
+ #04 ;bitmap #000c ADD2 STA
+ #20 ;bitmap #000d ADD2 STA JMP2r
+@set-bitmap-B
+ #03 ;bitmap #0001 ADD2 STA
+ #c0 ;bitmap #0003 ADD2 STA
+ #07 ;bitmap #0004 ADD2 STA
+ #60 ;bitmap #0008 ADD2 STA
+ #0e ;bitmap #000c ADD2 STA
+ #30 ;bitmap #000d ADD2 STA JMP2r
+@malloc
+ #00 .error STZ DUP2 DUP2 #0000 NEQ2 ,&cont1 JCN POP2 POP2 #01 .error STZ
+ #0000 JMP2r 
+&cont1
+ #0001 SUB2 PAGE_SZ DIV2 #0001 ADD2 .n_pages STZ2 .n_pages LDZ2 N_PAGES GTH2 not ,&cont2 JCN POP2 #07 .error STZ
+ #0000 JMP2r 
+&cont2
+ #0000 ;&idx STA2 
+&loop
+ ;&idx LDA2 N_PAGES LTH2 ,&body JCN
+ ;&done JMP2 
+&body
+ ;&idx LDA2 .n_pages LDZ2 alloc_sz_is_free_at_idx #00 EQU
+ ,&cont JCN
+ .error LDZ
+ #00 EQU
+ ,&cont3 JCN
+ #0000 JMP2r 
+&cont3
+ ;&idx LDA2 .n_pages LDZ2 claim_alloc_sz_at_idx ;n_allocs LDA2 DUP2 MAX_N_ALLOCS NEQ2 ,&cont4 JCN
+ #05 .error STZ
+ #0000 JMP2r 
+&cont4
+ INC2 ;n_allocs STA2 ;&idx LDA2 PAGE_SZ MUL2 DMEM_START ADD2 DUP2 ROT2 ROT2 insert-ptr POP JMP2r 
+&cont
+ ;&idx LDA2 INC2 ;&idx STA2 ;&loop JMP2 
+&done
+ POP2 #0000 JMP2r 
+&idx
+ $2
+@free
+ DUP2 ;&ptr STA2 DMEM_START SUB2 PAGE_SZ DIV2 DUP2 DUP2 #0000 LTH2 ROT ROT N_PAGES #0001 SUB2 GTH2 ORA not ,&cont JCN
+ #02 .error STZ JMP2r 
+&cont
+ ;&ptr LDA2 lookup-ptr DUP2 #0000 EQU2 ,&error6 JCN
+ #00 .error STZ
+ #0001 SUB2 PAGE_SZ DIV2 #0001 ADD2 free_alloc_sz_at_idx ;&ptr LDA2 delete-ptr POP
+ ;n_allocs LDA2 #0001 SUB2 ;n_allocs STA2 JMP2r 
+&error6
+ #06 .error STZ JMP2r 
+&ptr
+ $2
+@alloc_sz_is_free_at_idx
+ #0000 .jj STZ2 
+&loop
+ DUP2 .jj LDZ2 SWP2 LTH2 ,&body JCN
+ ,&done JMP
+ &body
+ SWP2 DUP2 DUP2 .jj LDZ2 ADD2 N_PAGES #0001 SUB2 GTH2 ,&ret_0_over JCN
+ .jj LDZ2 ADD2 get_bit ,&ret_0_set JCN SWP2 .jj LDZ2 INC2 .jj STZ2 ,&loop JMP
+ &ret_0_over
+ #04 .error STZ POP2 POP2 POP2 #00 JMP2r 
+&ret_0_set
+ POP2 POP2 #00 JMP2r 
+&done
+ POP2 POP2 #01 JMP2r
+@claim_alloc_sz_at_idx
+ #0000 .jj STZ2 
+&loop
+ DUP2 .jj LDZ2 SWP2 LTH2 ,&body JCN
+ ,&done JMP
+ &body
+ SWP2 DUP2 .jj LDZ2 ADD2 set_bit SWP2 .jj LDZ2 INC2 .jj STZ2 ,&loop JMP
+ &done
+ POP2 POP2 JMP2r
+@free_alloc_sz_at_idx
+ #0000 .jj STZ2 
+&loop
+ DUP2 .jj LDZ2 SWP2 LTH2 ,&body JCN
+ ,&done JMP
+ &body
+ SWP2 DUP2 .jj LDZ2 ADD2 clear_bit SWP2 .jj LDZ2 INC2 .jj STZ2 ,&loop JMP
+ &done
+ POP2 POP2 JMP2r
+@get_bit
+ DUP2 #03 SFT2 .byte_idx STZ2 #0007 SWP2 .byte_idx LDZ2 #30 SFT2 SUB2 SUB2 .bit_idx STZ2 .byte_idx LDZ2 N_PAGES #0001 SUB2 GTH2 ,&error_outside JCN
+ ;bitmap .byte_idx LDZ2 ADD2 LDA
+ .byte STZ
+ .byte LDZ
+ .bit_idx LDZ2 NIP SFT
+ #01 AND JMP2r 
+&error_outside
+ #04 .error STZ JMP2r
+@clear_bit
+ DUP2 #03 SFT2 .byte_idx STZ2 #0007 SWP2 .byte_idx LDZ2 #30 SFT2 SUB2 SUB2 .bit_idx STZ2 ;bitmap .byte_idx LDZ2 ADD2 LDA
+ .byte STZ
+ .bit_idx LDZ2 mask_clear .byte LDZ SWP AND
+ ;bitmap .byte_idx LDZ2 ADD2 STA JMP2r
+@set_bit
+ DUP2 #03 SFT2 .byte_idx STZ2 #0007 SWP2 .byte_idx LDZ2 #30 SFT2 SUB2 SUB2 .bit_idx STZ2 ;bitmap .byte_idx LDZ2 ADD2 LDA
+ .byte STZ
+ .bit_idx LDZ2 mask_set .byte LDZ SWP ORA
+ ;bitmap .byte_idx LDZ2 ADD2 STA JMP2r
+@mask_clear
+ .bit_idx STZ2 #ff #01 .bit_idx LDZ2 NIP
+ #40 SFT SFT EOR JMP2r
+@mask_set
+ .bit_idx STZ2 #01 .bit_idx LDZ2 NIP
+ #40 SFT SFT JMP2r
+@clear-allocation
+ #0000 ;&i STA2 
+&loop
+ ;&i LDA2 #0080 EQU2 ,&done JCN
+ #0000 ;&i LDA2 ;allocated ADD2 STA2 #0000 ;&i LDA2 #0002 ADD2 ;allocated ADD2 STA2 ;&i LDA2 #0004 ADD2 ;&i STA2 ,&loop JMP
+ &done
+ JMP2r 
+&i
+ $2
+@insert-ptr
+ #0000 ;&i STA2 
+&loop
+ ;&i LDA2 #0080 EQU2 ,&full JCN
+ ;&i LDA2 ;allocated ADD2 DUP2 LDA2 #0000 NEQ2 ,&cont JCN DUP2 ROT2 ROT2 STA2 #0002 ADD2 STA2 ,&done JMP
+ &cont
+ POP2 ;&i LDA2 #0004 ADD2 ;&i STA2 ,&loop JMP
+ &done
+ #01 JMP2r 
+&full
+ POP2 POP2 #00 JMP2r 
+&i
+ $2
+@exists-ptr
+ #0000 ;&i STA2 
+&loop
+ ;&i LDA2 #0080 EQU2 ,&full JCN DUP2 ;&i LDA2 ;allocated ADD2 LDA2 EQU2 ,&done JCN
+ ;&i LDA2 #0004 ADD2 ;&i STA2 ,&loop JMP
+ &done
+ POP2 #01 JMP2r 
+&full
+ POP2 #00 JMP2r 
+&i
+ $2
+@lookup-ptr
+ #0000 ;&i STA2 
+&loop
+ ;&i LDA2 #0080 EQU2 ,&full JCN DUP2 ;&i LDA2 ;allocated ADD2 DUP2 LDA2 ROT2 EQU2 ,&done JCN POP2 ;&i LDA2 #0004 ADD2 ;&i STA2 ,&loop JMP
+ &done
+ #0002 ADD2 LDA2 NIP2 JMP2r 
+&full
+ #0000 JMP2r 
+&i
+ $2
+@delete-ptr
+ #0000 ;&i STA2 
+&loop
+ ;&i LDA2 #0080 EQU2 ,&full JCN DUP2 ;&i LDA2 ;allocated ADD2 DUP2 LDA2 ROT2 EQU2 ,&done JCN POP2 ;&i LDA2 #0004 ADD2 ;&i STA2 ,&loop JMP
+ &done
+ DUP2 #0002 ADD2 #0000 SWP2 STA2 #0000 SWP2 STA2 POP2 #01 JMP2r 
+&full
+ POP2 #00 JMP2r 
+&i
+ $2
+@allocated $80 
+BRK
+
+@fmt-dec-short
+ DUP2 n-dec-digits-in-short DUP
+ #01 EQU ?&done ,&n-dig STR
+ #01 
+&loop
+ ROT ROT DUP2 #000a DIV2 DUP2 #000a MUL2 ROT2 SWP2 SUB2 NIP
+ #30 ADD ROT ROT SWP2 SWP SWP2 ROT INC DUP LIT
+ &n-dig
+ $1 LTH ?&loop 
+&done
+ ROT ROT NIP
+ #30 ADD SWP JMP2r
+@fmt-dec-byte
+ #00 SWP fmt-dec-short JMP2r
+@fmt-hex-byte
+ #00 SWP
+ #01 
+&loop
+ ROT ROT DUP2 #0010 DIV2 DUP2 #0010 MUL2 ROT2 SWP2 SUB2 NIP h2a ROT ROT SWP2 SWP SWP2 ROT INC DUP
+ #02 LTH ?&loop ROT ROT NIP h2a SWP JMP2r
+@fmt-hex-byte-BAD
+ #01 
+&loop
+ SWP DUP
+ #10 DIV DUP
+ #10 MUL ROT SWP SUB h2a ROT ROT INC DUP
+ #02 LTH ?&loop ROT ROT NIP h2a SWP JMP2r
+@fmt-hex-short
+ fmt-hex-byte POP ROT fmt-hex-byte #02 ADD JMP2r
+@proc-n-items-from-ws-with-iter
+ ROT
+ ,&n STR
+ #00 ROT ROT
+ #00 STHk
+ &loop
+ LIT
+ &n
+ $1 EQU ?&end STH2k JSR2 STH2r STHr
+ #01 ADD STHk ROT ROT OVR2 NIP !&loop 
+&end
+ POPr POP2 POP JMP2r
+@proc-n-items-from-ws
+ ROT STHk
+ &loop
+ #00 EQU ?&end STH2k JSR2 STH2r STHr
+ #01 SUB STHk !&loop 
+&end
+ POPr POP2 JMP2r
+@print-int
+ DUP2 #0000 EQU2 ?&zero fmt-dec-short { #18 DEO JMP2r } STH2r !proc-n-items-from-ws 
+&zero
+ POP2 #3018 DEO JMP2r
+@print-int-stderr
+ DUP2 #0000 EQU2 ?&zero fmt-dec-short { #19 DEO JMP2r } STH2r !proc-n-items-from-ws 
+&zero
+ POP2 #3019 DEO JMP2r
+@print-hex
+ fmt-hex-short { #18 DEO JMP2r } STH2r !proc-n-items-from-ws
+
+@print-hex-2
+ #02 SUB fmt-hex-short { #18 DEO JMP2r } STH2r proc-n-items-from-ws NIP2 JMP2r
+@print-hex-3
+ fmt-hex-short { #18 DEO JMP2r } STH2r proc-n-items-from-ws SWP2 NIP ROT ROT JMP2r
+@print-hex-1
+ fmt-hex-short { #18 DEO JMP2r } STH2r proc-n-items-from-ws NIP2 NIP JMP2r
+@print-hex-stderr
+ fmt-hex-short { #19 DEO JMP2r } STH2r !proc-n-items-from-ws
+
+@write-byte-to-string-at-addr
+ ROT
+ #00 SWP ADD2 #0002 ADD2 STA JMP2r
+@write-byte-to-mem-at-addr
+ ROT
+ #00 SWP ADD2 STA JMP2r
+@memwrite-int
+ ,&str-addr STR2 DUP2 #0000 EQU2 ?&zero fmt-dec-short { LIT2 
+&str-addr
+ $2 write-byte-to-mem-at-addr JMP2r } STH2r proc-n-items-from-ws-with-iter JMP2r 
+&zero
+ #00 ,&str-addr LDR2 STA JMP2r
+@memwrite-hex
+ ,&str-addr STR2 fmt-hex-short { LIT2 
+&str-addr
+ $2 write-byte-to-mem-at-addr JMP2r } STH2r proc-n-items-from-ws-with-iter JMP2r
+@memwrite-hex-1
+ ,&str-addr STR2 fmt-hex-short POP2 POP
+ #01 { LIT2 
+&str-addr
+ $2 write-byte-to-mem-at-addr JMP2r } STH2r proc-n-items-from-ws-with-iter JMP2r
+@memwrite-hex-2
+ ,&str-addr STR2 fmt-hex-short POP POP POP
+ #02 { LIT2 
+&str-addr
+ $2 write-byte-to-mem-at-addr JMP2r } STH2r proc-n-items-from-ws-with-iter JMP2r
+@memwrite-hex-3
+ ,&str-addr STR2 fmt-hex-short POP POP
+ #03 { LIT2 
+&str-addr
+ $2 write-byte-to-mem-at-addr JMP2r } STH2r proc-n-items-from-ws-with-iter JMP2r
+@memwrite-char
+ STA JMP2r
+@strwrite-int
+ #0002 ADD2 memwrite-int #0004 JMP2r
+@strwrite-hex
+ #0002 ADD2 memwrite-hex #0004 JMP2r
+@strwrite-hex-1
+ #0002 ADD2 !memwrite-hex-1 #0001 JMP2r
+@strwrite-hex-2
+ #0002 ADD2 memwrite-hex-2 #0002 JMP2r
+@strwrite-hex-3
+ #0002 ADD2 memwrite-hex-3 #0003 JMP2r
+@strwrite-char
+ #0002 ADD2 memwrite-char #0001 JMP2r
+@strwrite-bool
+ ?&true #66 #0002 ADD2 memwrite-char 
+&true
+ #74 #0002 ADD2 memwrite-char #0001 JMP2r
+@print-char
+ #18 DEO JMP2r
+@print-char-stderr
+ #19 DEO JMP2r
+@print-bool
+ ?&true #6618 DEO JMP2r 
+&true
+ #7418 DEO JMP2r
+@print-bool-stderr
+ ?&true #6619 DEO JMP2r 
+&true
+ #7419 DEO JMP2r
+@sign-byte
+ #07 SFT
+ #02 MUL
+ #2b ADD JMP2r
+@sign-short
+ #0f SFT2 NIP
+ #02 MUL
+ #2b ADD JMP2r
+@abs-byte
+ DUP
+ #07 SFT ?&neg JMP2r 
+&neg
+ #ff SWP SUB INC JMP2r
+@abs-short
+ DUP2 #0f SFT2 NIP ?&neg JMP2r 
+&neg
+ #ffff SWP2 SUB2 INC2 JMP2r
+@print-signed-short
+ DUP2 sign-short #18 DEO abs-short !print-int
+
+@print-signed-byte
+ DUP2 sign-byte #18 DEO abs-byte #00 SWP !print-int
+
+@h2a
+ DUP
+ #0a LTH DUP
+ #01 SWP SUB
+ #57 MUL SWP
+ #30 MUL ADD ADD JMP2r
+@n-dec-digits-in-short
+ DUP2 #0000 EQU2 ?&is_zero #2710 #0005 
+&loop
+ ROT2 ROT2 DIV2k #0000 NEQ2 ?&done_loop #000a DIV2 ROT2 #0001 SUB2 !&loop 
+&is_zero
+ #01 JMP2r 
+&done_loop
+ POP2 POP2 NIP JMP2r
+@update-len
+ LDA2k ROT2 ADD2 SWP2 STA2 JMP2r
+@todo
+ { 0005 54 4f 44 4f 0a } STH2r print-str JMP2r
+@print-bit
+ #30 ADD
+ #18 DEO JMP2r
+@nl
+ #0a18 DEO JMP2r
+@ws
+ #2018 DEO JMP2r
+@0x
+ LIT2 78 30 #18 DEO
+ #18 DEO JMP2r
+@hr
+ LIT2 2d 2d #18 DEO
+ #18 DEO LIT2 2d 2d #18 DEO
+ #18 DEO
+ #0a18 DEO JMP2r
+@print-Python-bool
+ ,&true JCN { 0005 46 61 6c 73 65 } STH2r print-str JMP2r 
+&true
+ { 0004 54 72 75 65 } STH2r print-str JMP2r
+@print16-dec
+ !print-int
+
+@print8-dec
+ #00 SWP !print-int
+
+@write-string
+ STH DUP2 LDA2 SWP2 INC2 INC2 DUP2 ROT2 ADD2 SWP2 
+&l
+ LDAk STHrk DEO INC2 GTH2k ?&l POP2 POP2 POPr JMP2r
+@print-str
+ #18 !write-string
+
+@print8
+ DUP lonib h2a SWP hinib h2a #18 DEO
+ #18 DEO JMP2r
+@print16
+ SWP print8 print8 JMP2r
+@lonib
+ #0f AND JMP2r
+@hinib
+ #04 SFT JMP2r
+@h2aOFF
+ DUP
+ #0a LTH DUP
+ #01 SWP SUB
+ #57 MUL SWP
+ #30 MUL ADD ADD JMP2r
+@reset
+ #00 .error STZ
+ #0000 ;n_allocs STA2 clear-bitmap clear-allocation clear-vmem
+@clear-bitmap
+ #0000 ,&idx STR2 
+&loop
+ ,&idx LDR2 N_PAGES #03 SFT2 EQU2 ,&done JCN
+ #00 ,&idx LDR2 ;bitmap ADD2 STA
+ ,&idx LDR2 INC2 ,&idx STR2 ,&loop JMP
+ &done
+ JMP2r 
+&idx
+ $2
+@clear-vmem
+ #0000 ,&idx STR2 
+&loop
+ ,&idx LDR2 MAX_ALLOC_SZ EQU2 ,&done JCN
+ #00 ,&idx LDR2 ;vmem ADD2 STA
+ ,&idx LDR2 INC2 ,&idx STR2 ,&loop JMP
+ &done
+ JMP2r 
+&idx
+ $2
+@print-bitmap
+ #0000 ,&idx STR2 
+&loop
+ ,&idx LDR2 #0040 EQU2 ,&done JCN
+ ,&idx LDR2 ;bitmap ADD2 LDA print8-dec ws ,&idx LDR2 INC2 ,&idx STR2 ,&loop JMP
+ &done
+ JMP2r 
+&idx
+ $2
+@print-allocated
+ #0000 ,&idx STR2 
+&loop
+ ,&idx LDR2 #0080 EQU2 ,&done JCN
+ ,&idx LDR2 ;allocated ADD2 LDA2 print16-dec ws ,&idx LDR2 ;allocated ADD2 #0002 ADD2 LDA2 print16-dec ws ,&idx LDR2 #0004 ADD2 ,&idx STR2 ,&loop JMP
+ &done
+ JMP2r 
+&idx
+ $2
+@not
+ #01 SWP SUB JMP2r
+@report-error
+ #00 SWP
+ #0002 MUL2 ;errors ADD2 LDA2 JSR2 JMP2r
+@get-error
+ .error LDZ JMP2r
+@errors
+ =no-error =null-ptr =invalid-ptr =invalid-access =outside-page =max-alloc =ptr-not-alloc =alloc-too-large
+@no-error
+ JMP2r
+@null-ptr
+ { 000c 4e 75 6c 6c 20 70 6f 69 6e 74 65 72 } STH2r !print-str
+
+@invalid-ptr
+ { 000f 49 6e 76 61 6c 69 64 20 70 6f 69 6e 74 65 72 } STH2r !print-str
+
+@invalid-access
+ { 000f 49 6e 76 61 6c 69 64 20 61 63 63 65 73 73 3a } STH2r !print-str
+
+@outside-page
+ { 0016 4f 75 74 73 69 64 65 20 6f 66 20 70 61 67 65 20 72 61 6e 67 65 3a } STH2r !print-str
+
+@max-alloc
+ { 0021 4d 61 78 20 6e 75 6d 62 65 72 20 6f 66 20 61 6c 6c 6f 63 61 74 69 6f 6e 73 20 72 65 61 63 68 65 64 } STH2r !print-str
+
+@ptr-not-alloc
+ { 0019 50 6f 69 6e 74 65 72 20 77 61 73 20 6e 6f 74 20 61 6c 6c 6f 63 61 74 65 64 } STH2r !print-str
+
+@alloc-too-large
+ { 0014 41 6c 6c 6f 63 61 74 69 6f 6e 20 74 6f 6f 20 6c 61 72 67 65 } STH2r !print-str
+
+@PAGE_SZ
+ #0010 JMP2r
+@N_PAGES
+ #0100 JMP2r
+@DMEM_START
+ #f000 JMP2r
+@MAX_N_ALLOCS
+ #0020 JMP2r
+@MAX_ALLOC_SZ
+ PAGE_SZ N_PAGES MUL2 JMP2r
+@n_allocs
+ 0000
+@bitmap $20 |f000 
+@vmem
+

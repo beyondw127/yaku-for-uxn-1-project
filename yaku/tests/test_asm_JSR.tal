@@ -1,0 +1,12 @@
+|0100
+LIT "O ;testJSR JSR2
+BRK
+@testJSR
+,&run JSR
+LIT "K #18 DEO
+,&done JMP
+&run
+#18 DEO
+JMP2r
+&done
+JMP2r

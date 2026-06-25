@@ -1,0 +1,15 @@
+|0100 
+ @main 
+ #0008 #0004 ;f_1 JSR2 ,&r1 STR2 
+ ,&r1 LDR2 #30 ADD ,&r2 STR 
+ ,&r2 LDR #18 DEO 
+ BRK 
+ &r1 $2 &r2 $2 
+ @f_1 
+ ,&r2 STR2 ,&r1 STR2 
+ ,&r1 LDR2 ,&r2 LDR2 DIV2k ,&r3 STR2 
+ ,&r2 LDR2 ,&r3 LDR2 ADD2 ,&r4 STR2 
+ ,&r4 LDR2  
+ JMP2r 
+ &r1 $2 &r2 $2 &r3 $2 &r4 $2 
+

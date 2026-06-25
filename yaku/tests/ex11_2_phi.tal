@@ -1,0 +1,17 @@
+( This is an example of an Uxntal program that needs a phi function to implement a loop in SSA )
+( It uses a  library print function to print out shorts as decimal values )
+|0100 @main
+  #0010 #0000 ;loop JSR2
+ADD2 ADD #0a ADD #18 DEO ( prints  '*' )
+BRK
+ 
+@loop
+    ( n counter=0 )
+    INC2 ( n counter+1 )  
+    OVR2 OVR2 ( n counter n counter )
+    ( we duplicate n and the counter because NEQ2 will remove them both )
+    NEQ2  ( n counter bool )
+    ;loop JCN2 ( n counter )
+    ( n, counter )
+    JMP2r
+

@@ -1,0 +1,27 @@
+
+|0100
+fractran_test
+BRK
+
+@ii $2
+@tacc $100
+@fractran_test
+
+#000a ;tacc STA2
+;tacc LDA2 INC2 #0001
+
+&l5
+DUP #2f ADD #18 DEO
+;ii STA2
+
+;tacc ;ii LDA2 #10 SFT2 ADD2 LDA2 
+#0000 GTH2 #00 EQU ?&b6
+#0001 ;tacc ;ii LDA2 #10 SFT2 ADD2 STA2
+&b6
+;ii LDA2 INC2 OVR2 OVR2 NEQ2 ?&l5
+;ii LDA2 INC2 ;ii STA2
+&l_e5 
+POP2 POP2
+POP2r 
+BRK
+

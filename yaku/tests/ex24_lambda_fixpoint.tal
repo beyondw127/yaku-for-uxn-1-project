@@ -1,0 +1,12 @@
+( ex24_lambda_fixpoint.tal )
+( loop 5 to 1 ) 
+|0100
+#05 { ( n f* ) 
+ROT DUP ( f* n n ) 
+DUP #30 ADD #18 DEO 
+?{ #2a18 DEO POP POP2 #01 JMP2r } 
+( f* n ) DUP #01 SUB ( f* n n-1 ) 
+SWP2 DUP2 ( n n-1 f* f* ) JSR2 MUL JMP2r } STH2r 
+{ DUP2 ( n f* f* ) JSR2 JMP2r } STH2r JSR2
+#18 DEO ( prints 'x', ASCII 120 )
+BRK

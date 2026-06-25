@@ -1,0 +1,21 @@
+( ./ex10_hello-world.tal )
+|0100 
+;hello_world ;rr0 STA2 
+@on-reset/while 
+;rr0 LDA2 LDA ,&r1 STR 
+,&r1 LDR #18 DEO 
+;rr0 LDA2 INC2 ,&r2 STR2 
+,&r2 LDR2 LDA ,&r3 STR 
+,&r3 LDR #00 NEQ ,&r4 STR 
+,&r2 LDR2 ;rr0 STA2 
+,&r4 LDR ;on-reset/while JCN2 
+BRK 
+&r1 $2 &r2 $2 &r3 $2 &r4 $2 
+@rr0 $2 
+@hello_world 
+"Hello, 
+20 
+"World! 
+00 
+                        
+

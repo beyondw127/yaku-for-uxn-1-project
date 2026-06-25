@@ -1,0 +1,27 @@
+|0100
+
+( #06 #07 ,&mult JSR )
+( rel addr is 6 )
+ 
+#04 #03 ,&mult JSR 
+#03 #02 ,&mult JSR
+ADD
+#04 #06 ,&mult JSR
+ADD 
+#18 DEO
+
+BRK
+
+&mult
+    MUL
+JMP2r
+
+BRK
+
+( how do we get the rel address? We'd need the abs address of the current location )
+( #0000 JSR POP STH2r  STH2r )
+( now we have the abs address from the RS )
+( SUB2 NIP ) ( this is the difference between those 2 addresses; keep 1 byte )
+( #0d ADD ) ( offset the calculation itself )
+( #00 SWP SUB ) ( invert the rel dist )
+( JMP )

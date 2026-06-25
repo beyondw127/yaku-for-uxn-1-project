@@ -1,0 +1,18 @@
+|0000
+@x $2
+|0100 ( every program starts at address 256 )
+
+#0006 .x STZ2k ( put 6 on the stack as a 2-byte (16-bit, short in Java/C) constant.
+Store it in .x and keep the arguments, so now #0006 and .x are on the stack
+)
+#01 #0001 SWP2 SWP ( 0006 .x 01 0001 -> 0006 0001 .x 01 -> 0006 0001 01 .x )
+LDZ2  ( load .x, this puts #0006 on the stack )
+ROT #00 SWP SUB2 ( 0006 0001 0005 )
+ADD2 ( 0006 0006 )
+MUL2 ( 0024 )
+NIP #18 DEO ( prints '$' in the terminal )
+
+
+BRK
+
+

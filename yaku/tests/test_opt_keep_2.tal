@@ -1,0 +1,18 @@
+|0000
+@x $2
+|0100 ( every program starts at address 256 )
+
+#0006 .x STZ2k ( put 6 on the stack as a 2-byte (16-bit, short in Java/C) constant.
+Store it in .x and keep the arguments, so now #0006 and .x are on the stack
+)
+#0001 #0001 STH2 [ ROT STH2r ROT ]
+LDZ2  ( load .x, this puts #0006 on the stack )
+SUB2
+ADD2 #000b ADD2
+MUL2 ( multiply the value on the top of the stack, 6, with the value below that, 7 )
+[ NIP #18 DEO ] ( prints '*' in the terminal, because 42 is the ASCII code for '*' )
+( DEO means 'device output' and #18 is the output port for the terminal, like StdOut in Java )
+
+BRK
+
+

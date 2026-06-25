@@ -1,0 +1,167 @@
+( This is a 3-D stencil calculation performed in a time loop )
+( in pseudo-code, it does 
+
+  do t =  1,te
+  p(i,j,k) = (p(i+1,j,k)+p(i-1,j,k)+p(i,j+1,k)+p(i,j-1,k)+p(i,j,k+1)+p(i,j,k-1))/6+p(i,j,k))/2
+  end do
+
+  The p array is 16*16*16 = 4K shorts
+
+)
+|0100 @main
+  fill
+  stencil
+BRK
+
+@fill
+  &loop_t
+    #0000 ;&k STA2
+    #0001 ;&kp STA2 ( k = 0 .. 15 )
+    &loop_k
+      #0000 ;&j STA2
+      #0001 ;&jp STA2 ( j = 0 .. 15 )
+      &loop_j
+        #0000 ;&i STA2
+        #0001 ;&ip STA2 ( i = 0 .. 15 )
+        &loop_i
+          ( i+16*j+256*k )
+          ;&k LDA2 #0100 MUL2
+          ;&j LDA2 #0010 MUL2
+          ;&i LDA2 
+          ADD2
+          ADD2 
+          DUP2 
+          ;p ADD2 STA2
+
+          ;&i LDA2 INC2k ;&i STA2  
+          ;&ip LDA2 LTH2 ?&loop_i
+
+        ;&j LDA2 INC2k ;&j STA2 
+        ;&jp LDA2 LTH2 ?&loop_j 
+
+      ;&k LDA2 INC2k ;&k STA2 
+      ;&kp LDA2 LTH2 ?&loop_k
+  
+JMP2r
+&i $2 &ip $2
+&j $2 &jp $2
+&k $2 &kp $2
+
+@stencil
+  #0000 ;&t STA2
+  #0001 ;&te STA2 ( repeat 256 times )
+
+  &loop_t
+    #0000 ;&k STA2
+    #0001 ;&kp STA2 ( k = 0 .. 15 )
+    &loop_k
+      #0000 ;&j STA2
+      #0001 ;&jp STA2 ( j = 0 .. 15 )
+      &loop_j
+        #0000 ;&i STA2
+        #0001 ;&ip STA2 ( i = 0 .. 15 )
+        &loop_i                     
+          ( i+16*j+256*k )
+          ;&k LDA2 hput
+          #0100 MUL2
+          ;&j LDA2 hput
+          ( DUP2 NIP 
+          DUP DUP #30 ADD SWP #0a LTH MUL SWP DUP #37 ADD SWP #09 GTH MUL ADD
+          #18 DEO )
+          #0010 MUL2
+          ADD2
+          ;&i LDA2 hput
+          ( DUP2 NIP
+          DUP DUP #30 ADD SWP #0a LTH MUL SWP DUP #37 ADD SWP #09 GTH MUL ADD
+          #18 DEO )
+          ( #0a18 DEO )
+          ADD2 
+          ;p ADD2
+          ( DUP2 print 
+          #0a18 DEO )
+          ;&idx STA2 ( idx = pointer to p at i+16*j+256*k = &p(i,j,k) )
+
+          ;&idx LDA2 
+          ;&i LDA2 #000e GTH2 ?&skip_x_pos
+          #0001 ADD2 
+          &skip_x_pos
+          LDA2 ( p(i+1,j,k) ) ( OK if i<15 )
+          ;&idx LDA2 ( p(i,j,k) )
+          DUP2 ;p #0001 ADD2 LTH2 ?&skip_x ( if  p(i,j,k) >= p+1 then p(i,j,k) else p(i-1,j,k) )
+          ( if idx>p+256 )
+          #0001 SUB2 
+          &skip_x
+          LDA2 ( p(i-1,j,k) if i>=1 )
+          ADD2 ( p(i+1,j,k) + p(i-1,j,k) )
+          ;&idx LDA2 
+          ;&j LDA2 #000e GTH2 ?&skip_y_pos
+          #0010 ADD2 
+          &skip_y_pos
+          LDA2 ( p(i,j+1,k) )
+          ;&idx LDA2 DUP2 ;p #0010 ADD2 LTH2 ?&skip_y ( if  p(i,j,k) >= p+16 then  p(i,j-1,k) else p(i,j,k) )
+          #0010 SUB2
+          &skip_y
+          LDA2 ( p(i,j-1,k) if j>=1 )
+          ADD2 ( p(i,j+1,k) + p(i,j-1,k) )
+          ADD2
+          ;&idx LDA2 
+          ;&k LDA2 #000e GTH2 ?&skip_z_pos
+          #0100 ADD2 
+          &skip_z_pos
+          LDA2 ( p(i,j,k+1) )
+          ;&idx LDA2 DUP2 ;p #0100 ADD2 LTH2 ?&skip_z
+          #0100 SUB2
+          &skip_z
+          LDA2
+          ADD2 
+          ADD2
+          #01 SFT2
+          #0003 DIV2 
+
+          ;&idx LDA2 LDA2 
+          ADD2
+          #01 SFT2
+
+          ;&idx LDA2 STA2
+          ;&i LDA2 INC2k ;&i STA2  
+          ;&ip LDA2 LTH2 ?&loop_i ( i+1<ip )
+
+        ;&j LDA2 INC2k ;&j STA2 
+        ;&jp LDA2 LTH2 ?&loop_j 
+
+      ;&k LDA2 INC2k ;&k STA2 
+      ;&kp LDA2 LTH2 ?&loop_k
+
+    ;&t LDA2 
+
+ DUP2 print 
+ #0a18 DEO 
+( #2a18 DEO )
+
+    INC2k ;&t STA2 BRK
+    ;&te LDA2 LTH2 ?&loop_t
+
+  ;&t LDA2
+JMP2r
+&t $2 &te $2
+&i $2 &ip $2
+&j $2 &jp $2
+&k $2 &kp $2
+&idx 0000
+
+@hput
+  DUP2 NIP
+  DUP DUP #30 ADD SWP #0a LTH MUL SWP DUP #37 ADD SWP #09 GTH MUL ADD
+  #18 DEO
+JMP2r  
+
+@print ( short* -- )
+    &short ( short* -- ) SWP ,&byte JSR
+    &byte ( byte -- ) DUP #04 SFT ,&char JSR
+    &char ( char -- ) #0f AND DUP #09 GTH #27 MUL ADD #30 ADD #18 DEO
+JMP2r
+
+        
+
+( |0300 )
+@p $1000

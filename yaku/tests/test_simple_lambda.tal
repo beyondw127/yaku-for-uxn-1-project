@@ -1,0 +1,7 @@
+|0100
+test_simple_lambda
+BRK
+
+@test_simple_lambda
+{ #2a18 DEO JMP2r } STH2r JSR2
+JMP2r

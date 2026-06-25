@@ -1,0 +1,19 @@
+|0100
+#0000 ;main_strLen str2array
+#20 ADD #18 DEO
+#0a18 DEO
+BRK
+( ==== str2array ==== )
+@main_strLen 0008
+
+@strLen $2
+@idx $2
+@ii $2
+@str2array
+;strLen STA2 ( stores 8:16 )
+;idx STA2 ( stores 0:16 )
+#0002 ;ii STA2  ( stores 2:16 )
+;ii LDA2 ;idx LDA2 ADD2 ;strLen LDA2 LDA2 ADD2 NIP  ( 2+0+8 ) 
+JMP2r
+
+

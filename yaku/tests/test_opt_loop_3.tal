@@ -1,0 +1,14 @@
+|0100
+loop_test_1
+BRK
+
+@loop_test_1
+#00 ;&idx STA
+&loop
+;&idx LDA #30 ADD #18 DEO
+( ;&idx LDA INC ;&idx STA )
+;&idx LDA INC ;&idx STA
+;&idx LDA #0a LTH 
+?&loop
+JMP2r
+&idx $1

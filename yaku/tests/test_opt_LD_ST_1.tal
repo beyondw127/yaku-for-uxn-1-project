@@ -1,0 +1,8 @@
+|0100
+#06 test_LD_ST_1
+BRK
+@test_LD_ST_1
+;&x STA ;&x LDA #01 ADD ;&z STA
+;&z LDA
+JMP2r
+&x $1 &y $1 &z $1

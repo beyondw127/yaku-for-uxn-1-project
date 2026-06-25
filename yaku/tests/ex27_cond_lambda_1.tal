@@ -1,0 +1,22 @@
+|0100
+#00 ?{ #2a18 DEO } #2b18 DEO
+
+#0a18 DEO
+( is the same as )
+
+#00 ,&true JCN #2a18 DEO &true #2b18 DEO
+
+#0a18 DEO
+( and )
+
+#01 ?{ #2a18 DEO } #2b18 DEO
+
+#0a18 DEO
+( is the same as )
+
+#01 ,&true2 JCN #2a18 DEO &true2 #2b18 DEO
+
+( so we can replace ?{ by ,&true JCN and } by &true )
+( or to play it safe ;true JCN2 and @true )
+( which means it is the same treatment as the ordinary lambda )
+BRK 

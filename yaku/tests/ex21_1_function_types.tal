@@ -1,0 +1,19 @@
+|0100
+
+( 6 )
+#0000 ;uncond_recursion_2 JSR2
+NIP #18 DEO
+
+
+BRK
+
+( 6 )
+@uncond_recursion_2
+INC2 DUP2
+#0007 NEQ2
+;loop JCN2
+#0007 MUL2 #0005 ADD2
+JMP2r
+
+@loop
+;uncond_recursion_2 JMP2

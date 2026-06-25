@@ -1,0 +1,82 @@
+
+
+( ==================================================== )
+( Functions for printing )
+@todo { 0005 "TODO 0a } STH2r print-str JMP2r
+
+@print-bit #30 ADD #18 DEO JMP2r
+@nl #0a18 DEO JMP2r
+@ws #2018 DEO JMP2r
+@0x LIT2 "x0 #18 DEO #18 DEO JMP2r
+@hr LIT2 "-- #18 DEO #18 DEO LIT2 "-- #18 DEO #18 DEO #0a18 DEO JMP2r
+
+( b -- )
+@print-Python-bool
+,&true JCN
+{ 0005 "False } STH2r print-str
+JMP2r 
+&true
+{ 0004 "True } STH2r print-str
+JMP2r
+
+@print16-dec 
+    !print-int
+
+@print8-dec 
+    #00 SWP !print-int
+
+@write-string ( {str}* unit -- )
+	STH
+    DUP2 LDA2 ( str len )
+    SWP2 ( len str )
+    INC2 INC2 DUP2  ( len str+2 str+2 )
+    ROT2 ADD2 SWP2 ( str+2+len str+2 )
+    &l ( -- )
+    LDAk STHrk DEO
+        INC2 GTH2k ?&l
+        POP2 POP2 
+	POPr
+JMP2r
+
+@print-str 
+    #18 !write-string
+    
+@print8 ( b -: )
+    DUP ( b b )
+    lonib ( b ln )
+    h2a ( b lna )
+    SWP ( lna b )
+    hinib ( lna hn )
+    h2a ( lna hna )
+    #18 DEO #18 DEO
+    JMP2r
+
+@print16 ( a* -: )
+    SWP
+    print8
+    print8
+    JMP2r
+
+@lonib ( a -: b )
+    #0f AND
+    JMP2r
+
+@hinib ( a -: b )
+    #04 SFT
+    JMP2r
+
+@h2aOFF ( a -: b )
+    DUP ( a a )
+    #0a LTH ( a c1 )
+    DUP ( a c1 c1 )
+    #01 SWP SUB ( a c1 1-c1 )
+    #57 MUL ( a c1 [1-c1]*57 )
+    SWP ( a [1-c1]*57 c1 )
+    #30 MUL ( a [1-c1]*57 c1*30 )
+    ADD 
+    ADD ( a+[1-c1]*57+c1*30 )
+    JMP2r
+( END of functions for printing and strings )
+( ==================================================== )
+
+

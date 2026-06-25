@@ -1,0 +1,259 @@
+( Unit tests for dynamic memory allocation code )
+
+~dynamic-memory-alloc-decls-sol.tal
+
+|0100
+( unit tests )
+test-mask_clear
+test-mask_set
+test-get_bit
+test-clear_bit 
+test-set_bit 
+
+set-bitmap-B
+hr
+test-alloc_sz_is_free_at_idx
+test-claim_alloc_sz_at_idx
+test-free_alloc_sz_at_idx
+
+test-malloc
+test-free
+
+BRK
+
+( define your tests here )
+
+@test-mask_clear ( -- )
+    { 001d "Test 20 "for 20 "mask_clear(bit_idx) 0a } STH2r print-str
+    #0000 mask_clear ( 1111 1110 ) #fe EQU print-Python-bool nl
+    #0001 mask_clear ( 1111 1101 ) #fd EQU print-Python-bool nl
+    #0002 mask_clear ( 1111 1011 ) #fb EQU print-Python-bool nl
+    #0003 mask_clear ( 1111 0111 ) #f7 EQU print-Python-bool nl
+    #0004 mask_clear ( 1110 1111 ) #ef EQU print-Python-bool nl
+    #0005 mask_clear ( 1101 1111 ) #df EQU print-Python-bool nl
+    #0006 mask_clear ( 1011 1111 ) #bf EQU print-Python-bool nl
+    #0007 mask_clear ( 0111 1111 ) #7f EQU print-Python-bool nl
+    hr
+JMP2r
+
+@test-mask_set ( -- )
+    { 001b "Test 20 "for 20 "mask_set(bit_idx) 0a } STH2r print-str
+    #0000 mask_set ( 0000 0001 ) #01 EQU print-Python-bool nl
+    #0001 mask_set ( 0000 0010 ) #02 EQU print-Python-bool nl
+    #0002 mask_set ( 0000 0100 ) #04 EQU print-Python-bool nl
+    #0003 mask_set ( 1111 0111 ) #08 EQU print-Python-bool nl
+    #0004 mask_set ( 1110 1111 ) #10 EQU print-Python-bool nl
+    #0005 mask_set ( 1101 1111 ) #20 EQU print-Python-bool nl
+    #0006 mask_set ( 1011 1111 ) #40 EQU print-Python-bool nl
+    #0007 mask_set ( 0111 1111 ) #80 EQU print-Python-bool nl
+    hr
+JMP2r
+
+( 1/ test with 8 bytes in different locations with a different bit set )
+( 2/ test with 8 bytes in different locations with multiple bits set )
+( In both cases, read bits that are set and not set )
+@test-get_bit ( -- )
+    { 0016 "Test 20 "for 20 "get_bit(idx) 0a } STH2r print-str
+    ( 
+    #01 ;bitmap #0001 ADD2 STA ( positions: 16=1,15=0 )
+    #80 ;bitmap #0003 ADD2 STA ( positions: 24=1,25=0 )
+    #02 ;bitmap #0004 ADD2 STA ( positions: 38=1,39=0 )
+    #60 ;bitmap #0008 ADD2 STA ( positions: 65=1,66=1 )
+    #04 ;bitmap #000c ADD2 STA ( positions: 101=1,102=0 )
+    #20 ;bitmap #000d ADD2 STA ( position: 106=1,107=0 )
+    )
+    set-bitmap-A
+
+    #0010 get_bit #00 EQU #000f get_bit #01 EQU AND print-Python-bool nl
+    #0018 get_bit #01 EQU #0019 get_bit #00 EQU AND print-Python-bool nl
+    #0026 get_bit #01 EQU #0027 get_bit #00 EQU AND print-Python-bool nl
+    #0041 get_bit #01 EQU #0042 get_bit #01 EQU AND print-Python-bool nl
+    #0065 get_bit #01 EQU #0066 get_bit #00 EQU AND print-Python-bool nl
+    #006a get_bit #01 EQU #006b get_bit #00 EQU AND print-Python-bool nl
+
+    set-bitmap-B
+
+    #0010 get_bit #00 EQU #000f get_bit #01 EQU AND print-Python-bool nl
+    #0018 get_bit #01 EQU #0019 get_bit #01 EQU AND print-Python-bool nl
+    #0026 get_bit #01 EQU #0025 get_bit #01 EQU AND print-Python-bool nl
+    #0041 get_bit #01 EQU #0042 get_bit #01 EQU AND print-Python-bool nl
+    #0064 get_bit #01 EQU #0065 get_bit #01 EQU AND print-Python-bool nl
+    #006a get_bit #01 EQU #006b get_bit #01 EQU AND print-Python-bool nl
+    hr
+JMP2r
+
+@test-clear_bit ( -- )
+    { 0018 "Test 20 "for 20 "clear_bit(idx) 0a } STH2r print-str
+    #000f clear_bit #000e clear_bit
+    #0018 clear_bit #0019 clear_bit
+    #0026 clear_bit #0027 clear_bit
+    #0041 clear_bit #0042 clear_bit
+    #0065 clear_bit #0066 clear_bit
+    #006a clear_bit #006b clear_bit
+
+    #000f get_bit #00 EQU #000e get_bit #00 EQU AND print-Python-bool nl
+    #0018 get_bit #00 EQU #0019 get_bit #00 EQU AND print-Python-bool nl
+    #0026 get_bit #00 EQU #0027 get_bit #00 EQU AND print-Python-bool nl
+    #0041 get_bit #00 EQU #0042 get_bit #00 EQU AND print-Python-bool nl
+    #0065 get_bit #00 EQU #0066 get_bit #00 EQU AND print-Python-bool nl
+    #006a get_bit #00 EQU #006b get_bit #00 EQU AND print-Python-bool nl
+    hr
+JMP2r
+
+@test-set_bit ( -- )
+    { 0016 "Test 20 "for 20 "set_bit(idx) 0a } STH2r print-str
+    #000f set_bit #000e set_bit
+    #0018 set_bit #0019 set_bit
+    #0026 set_bit #0027 set_bit
+    #0041 set_bit #0042 set_bit
+    #0065 set_bit #0066 set_bit
+    #006a set_bit #006b set_bit
+
+    #000f get_bit #01 EQU #000e get_bit #01 EQU AND print-Python-bool nl
+    #0018 get_bit #01 EQU #0019 get_bit #01 EQU AND print-Python-bool nl
+    #0026 get_bit #01 EQU #0027 get_bit #01 EQU AND print-Python-bool nl
+    #0041 get_bit #01 EQU #0042 get_bit #01 EQU AND print-Python-bool nl
+    #0065 get_bit #01 EQU #0066 get_bit #01 EQU AND print-Python-bool nl
+    #006a get_bit #01 EQU #006b get_bit #01 EQU AND print-Python-bool nl
+    hr
+JMP2r
+
+@test-alloc_sz_is_free_at_idx ( -- )
+    { 002f "Test 20 "for 20 "alloc_sz_is_free_at_idx(idx,alloc_sz) 0a } STH2r print-str 
+( All 0 )
+    { 0006 "part1 0a } STH2r print-str
+     #000f #0001 alloc_sz_is_free_at_idx #00 EQU print-Python-bool nl
+     #000f #0002 alloc_sz_is_free_at_idx #00 EQU print-Python-bool nl
+     #000f #0004 alloc_sz_is_free_at_idx #00 EQU print-Python-bool nl
+     #000f #0008 alloc_sz_is_free_at_idx #00 EQU print-Python-bool nl
+     #000f #0010 alloc_sz_is_free_at_idx #00 EQU print-Python-bool nl
+     { 0006 "part2 0a } STH2r print-str 
+( Last is 0 because 24 is set )
+     #0010 #0001 alloc_sz_is_free_at_idx #01 EQU print-Python-bool nl
+     #0010 #0002 alloc_sz_is_free_at_idx #01 EQU print-Python-bool nl
+     #0010 #0004 alloc_sz_is_free_at_idx #01 EQU print-Python-bool nl
+     #0010 #0008 alloc_sz_is_free_at_idx #01 EQU print-Python-bool nl
+     #0010 #0010 alloc_sz_is_free_at_idx #00 EQU print-Python-bool nl
+     { 0006 "part3 0a } STH2r print-str 
+( 11100 because 24 is set )
+     #0011 #0001 alloc_sz_is_free_at_idx #01 EQU print-Python-bool nl
+     #0011 #0002 alloc_sz_is_free_at_idx #01 EQU print-Python-bool nl
+     #0011 #0004 alloc_sz_is_free_at_idx #01 EQU print-Python-bool nl
+     #0011 #0008 alloc_sz_is_free_at_idx #00 EQU print-Python-bool nl
+     #0011 #0010 alloc_sz_is_free_at_idx #00 EQU print-Python-bool nl
+     { 0006 "part4 0a } STH2r print-str 
+( All one )
+    #006c #0001 alloc_sz_is_free_at_idx #01 EQU print-Python-bool nl
+    #006c #0002 alloc_sz_is_free_at_idx #01 EQU print-Python-bool nl
+    #006c #0004 alloc_sz_is_free_at_idx #01 EQU print-Python-bool nl
+    #006c #0008 alloc_sz_is_free_at_idx #01 EQU print-Python-bool nl
+    #006c #0010 alloc_sz_is_free_at_idx #01 EQU print-Python-bool nl
+JMP2r
+
+@test-claim_alloc_sz_at_idx ( -- )
+    { 002d "Test 20 "for 20 "claim_alloc_sz_at_idx(idx,alloc_sz) 0a } STH2r print-str
+    ( claim alloc of 1,2,3,4,5 starting at 0 )
+    ;bitmap LDA2 STH2 ( stash first 2 bytes )
+    { 0006 "part1 0a } STH2r print-str
+    #0000 ;bitmap STA2 ( clear the bitmap's first 2 bytes ) 
+    ( print-bitmap nl )
+    #0000 #0001 claim_alloc_sz_at_idx ( 1000 000 )
+    0x ;bitmap LDA DUP print8 ws #80 EQU print-Python-bool nl ( OK )
+    #0001 #0002 claim_alloc_sz_at_idx ( 1110 0000, is 1100 0000 )
+    0x ;bitmap LDA DUP print8 ws #e0 EQU print-Python-bool nl ( c0 instead of e0, i.e. 1100 0000 i.o. 1110 0000  )
+    #0003 #0003 claim_alloc_sz_at_idx ( 1111 1100, is 1101 1100 )
+    0x ;bitmap LDA DUP print8 ws #fc EQU print-Python-bool nl 
+    #0006 #0004 claim_alloc_sz_at_idx ( 1111 1111 1100 0000 , is 1101 1111 1000 0000 )
+    0x ;bitmap LDA DUP print8 ws
+    0x ;bitmap INC LDA DUP print8 ws #ffc0 EQU2 print-Python-bool nl 
+    #000a #0005 claim_alloc_sz_at_idx ( 1111 1111 1111 1110 , is 1101 1111 1010 1010 )
+    0x ;bitmap LDA DUP print8 ws
+    0x ;bitmap INC LDA DUP print8 ws #fffe EQU2 print-Python-bool nl 
+    ( restore to previous state )
+    STH2r ;bitmap STA2
+    { 0006 "part2 0a } STH2r print-str
+    #006c #0010 claim_alloc_sz_at_idx
+    #007c #0010 alloc_sz_is_free_at_idx #01 EQU print-Python-bool nl
+    #006c #0010 alloc_sz_is_free_at_idx #00 EQU print-Python-bool nl
+JMP2r
+
+@test-free_alloc_sz_at_idx ( -- ) 
+    { 002c "Test 20 "for 20 "free_alloc_sz_at_idx(idx,alloc_sz) 0a } STH2r print-str
+    #006c #0010 free_alloc_sz_at_idx
+    #007c #0010 alloc_sz_is_free_at_idx print-Python-bool nl
+    #006c #0010 alloc_sz_is_free_at_idx print-Python-bool nl
+JMP2r
+
+@test-malloc
+{ 001a "Test 20 "for 20 "malloc(alloc_sz) 0a } STH2r print-str
+    reset
+    MAX_ALLOC_SZ malloc ;&ptr STA2
+    ;&ptr LDA2 #0000 NEQ2 print-Python-bool nl
+    ;&ptr LDA2 free
+    get-error #00 EQU ,&cont JCN
+        #00 print-Python-bool nl
+    &cont
+
+    reset
+    MAX_ALLOC_SZ #0002 MUL2 INC2 malloc ;&ptr STA2
+    ;&ptr LDA2 #0000 EQU2 get-error #07 EQU AND print-Python-bool nl
+
+    reset
+    #0000 malloc ;&ptr STA2
+    ;&ptr LDA2 #0000 EQU2 get-error #01 EQU AND  print-Python-bool nl
+     
+    #0001 malloc ;&ptr STA2 
+    ;&ptr LDA2 #0000 NEQ2 get-error #00 EQU AND print-Python-bool nl
+
+    #0010 malloc ;&ptr STA2 
+    ;&ptr LDA2 free
+    get-error #00 EQU print-Python-bool nl
+JMP2r
+&ptr $2
+
+@test-free
+{ 0013 "Test 20 "for 20 "free(ptr) 0a } STH2r print-str
+    reset
+    #0000 free
+    get-error #02 EQU print-Python-bool nl 
+
+    reset
+    DMEM_START free
+    get-error #06 EQU print-Python-bool nl
+
+    DMEM_START #0001 SUB2 free
+    get-error #02 EQU print-Python-bool nl
+
+    #ffff free
+    get-error #06 EQU print-Python-bool nl
+
+    #0010 malloc ;&ptr STA2
+    ;&ptr LDA2 free
+    get-error #00 EQU print-Python-bool nl
+
+JMP2r
+&ptr $2
+
+@set-bitmap-A
+    #01 ;bitmap #0001 ADD2 STA 
+    #80 ;bitmap #0003 ADD2 STA 
+    #02 ;bitmap #0004 ADD2 STA 
+    #60 ;bitmap #0008 ADD2 STA 
+    #04 ;bitmap #000c ADD2 STA 
+    #20 ;bitmap #000d ADD2 STA 
+JMP2r
+
+@set-bitmap-B
+    #03 ;bitmap #0001 ADD2 STA ( positions: 16=0,15=1 )
+    #c0 ;bitmap #0003 ADD2 STA ( positions: 24=1,25=1 )
+    #07 ;bitmap #0004 ADD2 STA ( positions: 37=1,38=1 )
+    #60 ;bitmap #0008 ADD2 STA ( positions: 65=0,66=1 )
+    #0e ;bitmap #000c ADD2 STA ( positions: 100=1,101=1 )
+    #30 ;bitmap #000d ADD2 STA ( position: 106=1,107=1 )
+JMP2r
+
+
+
+( ==================================================== )
+
+~dynamic-memory-alloc-sol.tal

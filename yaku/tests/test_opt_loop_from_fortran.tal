@@ -1,0 +1,18 @@
+|0100
+fortran-loop
+BRK
+
+@fortran-loop
+
+#0008 #0000
+OVR2 OVR2 SUB2 #fff7 GTH2 ?&l_e_30
+&l_30
+;&ii STA2
+;&ii LDA2 NIP #20 ADD #18 DEO
+;&ii LDA2 INC2 OVR2 OVR2 NEQ2 ?&l_30
+;&ii LDA2 INC2 ;&ii STA2
+&l_e_30 POP2 POP2
+JMP2r
+&ii $2
+
+

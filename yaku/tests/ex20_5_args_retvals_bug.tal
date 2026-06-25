@@ -1,0 +1,42 @@
+( This is an test case for identifying functions )
+|0100 @main
+
+  #000a 
+  #0009 
+  #0008 
+  #0007 
+  #0006
+  #0005
+  #0004
+  #0003
+  #0002
+  #0001
+   ;f_2 JSR2
+
+#18 DEO ( prints 'Q' )
+BRK
+ 
+ 
+
+@f_2
+    ADD2 
+    MUL2  
+    &start
+    ADD2 
+    DUP2 DUP2 NIP
+    ( #00  )    
+    ,&start JCN    
+    MUL2        
+    DUP2 NIP
+    ( #00  )
+    ,&cont JCN
+    INC2
+    &cont
+    ADD2   
+    MUL2 
+    INC2
+    #0002
+    MUL2 
+    ADD2 
+    JMP2r  
+

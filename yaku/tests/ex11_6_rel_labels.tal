@@ -1,0 +1,18 @@
+( This shows that rel child labels are really relative to abs labels 
+but abs labels can be referenced relatively
+)
+|0100 
+  #0010 #0002 ;f_2 JSR2 
+  #04 MUL #18 DEO ( prints 'H' )
+BRK
+ 
+
+@f_1
+    &rel1
+    &zel2
+    ADD2
+JMP2r  
+
+@f_2
+    ( ;f_1 JMP2 )
+    ,f_1 JMP 

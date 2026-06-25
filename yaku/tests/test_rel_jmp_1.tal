@@ -1,0 +1,13 @@
+|0100
+;func JSR2
+BRK
+
+@func
+,&out JMP
+|0110
+&in 
+JMP2r
+|0120
+&out
+#2a18 DEO
+,&in JMP

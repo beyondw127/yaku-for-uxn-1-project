@@ -1,0 +1,15 @@
+( test labels in lambda )
+|0100
+#2a lambda
+    
+BRK
+
+@lambda
+    {  
+        ( @body )
+        ,&n STR
+        ,&n LDR #18 DEO
+        JMP2r
+        &n $1
+    } STH2r JSR2
+JMP2r    

@@ -1,0 +1,333 @@
+( Integration tests for dynamic memory allocation code )
+
+~dynamic-memory-alloc-decls-sol.tal
+@ii $2
+
+|0100
+( integration tests )
+
+integration-tests-01 ( 1 mark )
+integration-tests-02 ( 1 mark )
+integration-tests-03 ( 1 mark )
+integration-tests-04 ( 1 mark )
+integration-tests-05 ( 1 mark )
+integration-tests-06 ( 1 mark )
+integration-tests-07 ( 1 mark )
+integration-tests-08 ( 3 marks )
+BRK
+
+( ==================================================== )
+( test definitions )
+
+( 1. Call test_local_alloc repeatedly for MAX_N_ALLOCS*4 times )
+@integration-tests-01
+#01 #0001 ;ok ADD2 STA
+#0001 .ii STZ2
+&loop
+    .ii LDZ2 MAX_N_ALLOCS #0004 MUL2 EQU2 ,&done JCN
+        .ii LDZ2 #0002 MUL2 test_local_alloc 
+        .ii LDZ2 #0002 MUL2 INC2 NIP EQU ,&cont1 JMP
+            #00 #0001 ;ok ADD2 STA
+            #02 print-error-iter
+            ,&done JMP
+        &cont1
+        get-error #00 EQU ,&cont2 JMP
+            #00 #0001 ;ok ADD2 STA
+            #02 print-error-iter
+            ,&done JMP
+        &cont2
+    .ii LDZ2 INC2 .ii STZ2
+    ,&loop JMP
+&done
+
+#01 result
+
+reset
+JMP2r
+
+ ( Helper function which does malloc/use/free )
+@test_local_alloc ( sz* -- res )
+    DUP2 DUP2 DUP2 ( sz* sz* sz* sz* )
+    malloc 
+    DUP2 DUP2 ( sz* sz* sz* ptr* ptr* ptr* )
+    
+    #01 ROT ROT STA ( sz* sz* sz* ptr* ptr* )
+    ROT2 ( sz* sz* ptr* ptr* sz* )
+    ADD2 #0001 SUB2 ( sz* sz* ptr* [p+sz-1]* )
+    ROT2 ( sz* ptr* [p+sz-1]* sz* )
+    NIP ( sz* ptr* [p+sz-1]* sz_lsb )
+    ROT ROT ( sz* ptr* sz_lsb [p+sz-1]*  )
+    STA ( sz* ptr* )
+    DUP2 ( sz* ptr* ptr* )
+    ROT2 ( ptr* ptr* sz* )
+    ( res = memory[p+0]+memory[p+sz-1] )
+    ADD2 #0001 SUB2 LDA ( ptr* res1 )
+    ROT ROT ( res1 ptr* )
+    DUP2 ( res1 ptr* ptr* )
+    LDA ( res1 ptr* res2 )
+    ROT ROT SWP2 ( ptr* res1 res2 )
+    ADD ( ptr* res )
+    ROT ROT ( res ptr* )
+    free ( res )
+JMP2r
+&ptr $2
+
+( 2. call malloc MAX_N_ALLOCS+1 times, see if it throws an error on MAX_N_ALLOCS )
+@integration-tests-02
+#0001 .ii STZ2
+&loop
+    .ii LDZ2 MAX_N_ALLOCS INC2 INC2 EQU2 ,&done JCN
+        .ii LDZ2 #0002 MUL2 malloc POP2 ( discard ptr )
+        get-error #05 NEQ ,&cont1 JCN
+            .ii LDZ2 MAX_N_ALLOCS INC2 NEQ2 ,&cont2 JCN
+                #01 #0002 ;ok ADD2 STA
+            &cont2
+        &cont1
+    .ii LDZ2 INC2 .ii STZ2
+    ,&loop JMP
+&done    
+#0002 ;ok ADD2 LDA ,&no_error JCN
+    #02 print-error-noiter
+    ,&rst JMP
+&no_error
+#02 result
+&rst
+reset
+JMP2r
+&iter $2
+
+( 3. call malloc MAX_N_ALLOCS // 2 times, free every time )
+@integration-tests-03
+#01 #0003 ;ok ADD2 STA
+#0001 .ii STZ2
+&loop
+    .ii LDZ2 MAX_N_ALLOCS #0002 DIV2 INC2 EQU2 ,&done JCN
+        ( print-allocated nl )
+        .ii LDZ2 #0002 MUL2 malloc 
+        ( DUP2 print16-dec nl )
+        ( print-allocated nl )
+        free
+        ( print-allocated nl )
+        ( get-error print8-dec nl )
+        get-error #00 EQU ,&cont JCN
+            #03 print-error-iter
+            #00 #0003 ;ok ADD2 STA
+            ,&done JMP
+        &cont
+    .ii LDZ2 INC2 .ii STZ2
+    ,&loop JMP
+&done            
+#03 result
+
+reset
+JMP2r
+
+( 4. call malloc with increasing size to see if it correctly returns the null pointer )
+@integration-tests-04
+#01 #0004 ;ok ADD2 STA
+#0000 ;&sz_tot STA2
+#0001 .ii STZ2
+&loop
+    .ii LDZ2 MAX_N_ALLOCS #0002 DIV2 EQU2 ,&done JCN
+        #0004 .ii LDZ2 NIP #01 SUB #02 MUL #40 SFT SFT2
+        DUP2 ( sz* sz* )
+        malloc ( sz* ptr* )
+        SWP2 ( ptr* sz* )
+        ;&sz_tot LDA2 ADD2 ;&sz_tot STA2 ( ptr* )
+        #0000 NEQ2 ,&cont1 JCN
+            ;&sz_tot LDA2 MAX_ALLOC_SZ LTH2 not ,&cont2 JCN
+                #04 print-error-iter
+                #00 #0004 ;ok ADD2 STA
+            ,&done JMP
+            &cont2
+        &cont1
+.ii LDZ2 INC2 .ii STZ2
+,&loop JMP
+&done   
+#04 result
+
+reset
+JMP2r
+&sz_tot $2
+
+( 5. Do the same but free every time should be the same )
+@integration-tests-05
+#01 #0005 ;ok ADD2 STA
+#0001 .ii STZ2
+&loop
+    .ii LDZ2 MAX_N_ALLOCS #0002 DIV2 EQU2 ,&done JCN
+        #0004 .ii LDZ2 NIP #01 SUB #02 MUL #40 SFT SFT2
+        DUP2 ( sz* sz* )
+        malloc ( sz* ptr* )
+        DUP2 ( sz* ptr* ptr* )
+        #0000 NEQ2 ,&else JCN ( sz* ptr* )
+            POP2
+            MAX_ALLOC_SZ LTH2 not ,&done JMP
+                #05 print-error-iter
+                #00 #0005 ;ok ADD2 STA
+            ,&done JMP
+        &else
+            free POP2
+.ii LDZ2 INC2 .ii STZ2
+,&loop JMP
+&done   
+#05 result
+
+reset
+JMP2r
+
+( 6. As 4 but in reverse order )
+@integration-tests-06
+#01 #0006 ;ok ADD2 STA
+#0000 ;&n_pages_tot STA2
+#0001 .ii STZ2
+&loop
+    .ii LDZ2 MAX_N_ALLOCS #0002 DIV2 EQU2 ,&done JCN
+        MAX_ALLOC_SZ .ii LDZ2 NIP SFT2 ( sz* )
+        DUP2 ( sz* sz* )
+        malloc ( sz* ptr* )
+        SWP2 ( ptr* sz* )
+        SUB2 PAGE_SZ DIV2 INC2
+        ;&n_pages_tot LDA2 ADD2 ;&n_pages_tot STA2
+        #0000 NEQ2 ,&cont JCN
+            ;&n_pages_tot LDA2 N_PAGES LTH2 not ,&done JMP
+                #06 print-error-iter
+                #00 #0006 ;ok ADD2 STA
+            ,&done JMP
+        &cont
+.ii LDZ2 INC2 .ii STZ2
+,&loop JMP
+&done   
+#06 result
+reset
+JMP2r
+&n_pages_tot $2
+
+( 7. As 5 but in reverse order )
+@integration-tests-07
+#01 #0007 ;ok ADD2 STA
+#0001 .ii STZ2
+&loop
+    .ii LDZ2 MAX_N_ALLOCS #0002 DIV2 EQU2 ,&done JCN
+
+        MAX_ALLOC_SZ .ii LDZ2 NIP SFT2 ( sz* )
+        DUP2 ( sz* sz* )
+        malloc ( sz* ptr* )
+        DUP2 ( sz* ptr* ptr* )
+        #0000 NEQ2 ,&else JCN ( sz* ptr* )
+            POP2 DUP2 ( sz* sz* )
+            MAX_ALLOC_SZ LTH2  ( sz* b1 )
+            ROT ROT ( b1 sz* )
+            #0000 GTH2 ( b1 b2 ) AND ( b ) not ( not b ) ,&done JMP
+                #07 print-error-iter
+                #00 #0007 ;ok ADD2 STA
+            ,&done JMP
+        &else
+            free
+            POP2
+.ii LDZ2 INC2 .ii STZ2
+,&loop JMP
+&done  
+#07 result
+
+reset
+JMP2r
+
+( 8. Final test, 3 marks )
+( Allocate, free if the pointer was valid )
+@integration-tests-08
+    #0000 ;&n_pages_tot STA2
+    #01 #0008 ;ok ADD2 STA
+    #0001 .ii STZ2
+    &loop
+        .ii LDZ2 #00c9 EQU2 ;&done JCN2
+            .ii LDZ2 #0004 MUL2 ( mem_sz* )
+            DUP2 ( mem_sz* mem_sz* )
+            malloc ( mem_sz* ptr* ) ( so for 1..16 we have 1 page each; for 17, 18 etc we need two pages )
+            ( .ii LDZ2 #0004 MUL2 print16-dec ws
+            DUP2 print16-dec ws
+            get-error print8-dec nl )
+            SWP2 ( ptr* mem_sz* )
+            #0001 SUB2 PAGE_SZ DIV2 INC2 ( ptr* n_pages* )
+            DUP2 ( ptr* n_pages* n_pages* )
+            ;&n_pages_tot LDA2 ADD2 ;&n_pages_tot STA2 ( n_pages_tot+=n_pages ) ( ptr* n_pages* )
+            get-error #00 EQU ,&cont JCN ( when we exceed N_PAGES we we expect error 4 )
+                ;&n_pages_tot LDA2 N_PAGES LTH2 
+                get-error #04 EQU AND
+                get-error #04 NEQ ORA
+                not ,&cont2 JCN
+                    ( get-error print8-dec nl
+                    LIT "E #18 DEO LIT "1 #18 DEO nl )
+                    #08 print-error-iter
+                    #00 #0008 ;ok ADD2 STA    
+                    ;&done JMP2            
+                &cont2
+            &cont
+            SWP2 
+            DUP2 ( n_pages* ptr* ptr* )
+            #0000 EQU2 ,&else JCN ( n_pages* ptr* )
+                .ii LDZ2 #0014 LTH2
+                .ii LDZ2 #0032  GTH2 ORA
+                .ii LDZ2 #003c LTH2 
+                .ii LDZ2 #0064 GTH2 ORA 
+                AND ,&endif JCN
+                    ( { 0005 "free 20 } STH2r print-str 
+                    DUP2 print16-dec nl )
+                    free
+                    ;&n_pages_tot LDA2 ADD2 ;&n_pages_tot STA2
+                ,&endif JMP
+            &else
+                POP2 POP2 ( -- )
+                ;&n_pages_tot LDA2 N_PAGES LTH not ,&endif JCN ( means there was another error )
+                    LIT "E #18 DEO LIT "2 #18 DEO nl
+                    #08 print-error-iter
+                    #00 #0008 ;ok ADD2 STA
+                    ;&done JMP2
+            &endif
+    .ii LDZ2 INC2 .ii STZ2
+    ;&loop JMP2
+    &done  
+    #08 result
+    JMP2r
+    &n_pages_tot $2
+
+( ==================================================== )
+( Helpers for reporting of test outcomes )
+
+@result ( n :- -- )
+    DUP ,&n STR ( n )
+    #00 SWP  ( n n* ) ;ok ADD2 LDA ,&pass JCN
+        { 0005 "Test 20 } STH2r print-str
+        ,&n LDR print8-dec
+        { 0008 20 "failed 0a } STH2r print-str
+        JMP2r
+    &pass
+        { 0005 "Test 20 } STH2r print-str
+        ,&n LDR print8-dec 
+        { 0008 20 "passed 0a } STH2r print-str
+        JMP2r
+&n $1
+
+@print-error-iter ( n :- -- )
+,&n STR
+{ 0005 "Test 20 } STH2r print-str
+,&n LDR print8-dec
+{ 000b 20 "failed 20 "at 20 } STH2r print-str .ii LDZ2 print16-dec { 000c 20 "with 20 "error 20 } STH2r print-str 
+get-error report-error nl
+JMP2r
+&n $1
+
+@print-error-noiter ( n :- -- )
+,&n STR
+{ 0005 "Test 20 } STH2r print-str
+,&n LDR print8-dec
+{ 0013 20 "failed 20 "with 20 "error 20 } STH2r print-str 
+get-error DUP #30 ADD #18 DEO ws
+report-error nl
+JMP2r
+&n $1
+
+@ok $09
+( ==================================================== )
+
+~dynamic-memory-alloc-sol.tal

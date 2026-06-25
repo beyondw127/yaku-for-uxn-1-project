@@ -1,0 +1,60 @@
+|0100
+#0001 ;j STA2 ( -- )
+;pIdxs LDA2 #0002 ( pIdxs 2 ) 
+;j LDA2 ( pIdxs 2 j ) mul2 #0001 SUB2 #10 SFT2 ( pIdxs (2*j-1)*2 ) 
+
+ADD2 LDA2 ( pIdxs@(2*j-1)*2 ) 
+;start_t_j_idx STA2 ( -- ) ( start_t_j_idx=pIdxs(2*j) )
+;start_t_j_idx LDA2 NIP #18 DEO
+BRK
+@j $2
+@pIdxs =p
+@p 2c2a 2b2a 0000 0000
+@start_t_j_idx $2
+
+@mul2
+OVR2
+OVR2
+#8000
+LTH2
+STH
+#8000
+LTH2
+STH
+ANDrk
+STHr
+?&pp
+ORArk
+STHr
+#01
+SWP
+SUB
+?&mm
+STH2r
+#01
+SWP
+SUB
+AND
+?&mp
+!&pm
+&mp
+SWP2
+&pm
+neg2
+MUL2
+!neg2
+&mm
+neg2
+neg2
+&pp
+MUL2
+POP2r
+JMP2r
+
+
+@neg2
+#0000
+SWP2
+SUB2
+JMP2r
+@not #01 SWP SUB JMP2r

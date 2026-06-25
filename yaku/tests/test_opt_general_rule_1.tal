@@ -1,0 +1,20 @@
+( test_general_rule_1 )
+|0100
+#11 #22 #33 test_general_rule_1
+BRK
+@test_general_rule_1
+,&res STR 
+POP
+POP
+#01
+#02
+#03
+POP
+#1234 
+POP2 
+#12 
+,&x STR 
+,&x LDR 
+,&res LDR 
+JMP2r
+&x $1 &y $1 &res $1

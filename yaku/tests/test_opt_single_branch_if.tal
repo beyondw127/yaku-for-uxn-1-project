@@ -1,0 +1,135 @@
+ |00 @System  $2  $2  $1  $1  $2  $2  $2  $2  $1 &state $1
+|0100
+test_elsif
+( #80 .System/state DEO )
+BRK
+@test_elsif_res $2
+@test_elsif_n $2
+@test_elsif
+#000a ;test_elsif_n STA2 ( scalar )
+#002a ;test_elsif_res STA2
+
+;test_elsif_res LDA2 print-int 
+
+#2018 DEO ( , ) #0a18 DEO
+POP2r 
+
+exit 
+BRK ( MAIN )
+
+
+@print-int
+DUP2
+#0000
+EQU2
+?&zero
+fmt-dec-short
+{
+#18
+DEO
+JMP2r
+}
+STH2r
+!proc-n-items-from-ws
+&zero
+POP2
+#3018
+DEO
+JMP2r
+
+@proc-n-items-from-ws
+ROT
+STHk
+
+&loop
+#00 EQU
+
+?&end STH2k
+
+JSR2
+STH2r
+STHr
+#01 SUB
+STHk
+!&loop
+&end
+POPr
+POP2
+JMP2r
+
+@fmt-dec-short
+DUP2
+n-dec-digits-in-short
+DUP
+#01 EQU ?&done
+,&n-dig STR
+#01
+&loop
+ROT
+ROT
+DUP2
+#000a
+DIV2
+DUP2
+#000a
+MUL2
+ROT2
+SWP2
+SUB2
+NIP
+#30
+ADD
+ROT
+ROT
+SWP2
+SWP
+SWP2
+ROT
+INC
+DUP
+LIT &n-dig $1
+LTH
+?&loop
+&done
+ROT
+ROT
+NIP
+#30
+ADD
+SWP
+JMP2r
+
+@n-dec-digits-in-short
+DUP2
+#0000
+EQU2
+?&is_zero
+#2710
+#0005
+&loop
+ROT2
+ROT2
+DIV2k
+#0000
+NEQ2
+?&done_loop
+#000a
+DIV2
+ROT2
+#0001
+SUB2
+!&loop
+&is_zero
+#01
+JMP2r
+&done_loop
+POP2
+POP2
+NIP
+JMP2r
+
+@exit
+( POP2 )
+#80 .System/state DEO
+POP2r
+BRK

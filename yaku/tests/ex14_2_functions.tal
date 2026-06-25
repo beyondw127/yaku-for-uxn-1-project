@@ -1,0 +1,13 @@
+( This is an test case for jumps that keep the label )
+( What happens is that the label is pushed onto the stack before the jump )
+( So from the function perspective, it is the first element on the stack )
+|0100 @main
+
+#0005 ;add_ JSR2 ( so returns arg and inc )
+ADD2 
+BRK
+
+@add_ 
+    INC2    
+    INC2k ( needs 1 arg and leaves 2 elts on the stack )    
+    JMP2r

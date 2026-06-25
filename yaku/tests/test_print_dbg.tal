@@ -1,0 +1,32 @@
+|0100
+{ 0007 "Stage 20 30 } STH2r #18 write-string 
+BRK
+
+@write-string
+STH ( stash the port )
+DUP2 ( dup the start address of the lambda )
+LDA2 ( load it, so we should have 7 )
+SWP2
+INC2
+INC2
+DUP2
+ROT2
+ADD2
+SWP2
+&l
+LDAk
+STHrk
+DEO
+INC2
+GTH2k
+?&l
+POP2
+POP2
+POPr
+JMP2r
+
+@print-string
+#18
+!write-string
+
+

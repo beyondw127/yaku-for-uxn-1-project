@@ -1,0 +1,21 @@
+|0100
+#01 ;testJCN JSR2
+#2a18 DEO
+#00 ;testJCN JSR2
+BRK
+
+@testJCN
+;true JCN2
+@done
+!false
+
+
+@true
+LIT "T #18 DEO
+;done JMP2
+
+@false
+LIT "F #18 DEO
+JMP2r
+
+

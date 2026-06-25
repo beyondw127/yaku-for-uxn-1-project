@@ -1,0 +1,49 @@
+ |00 @System  $2  $2  $1  $1  $2  $2  $2  $2  $1 &state $1
+|0100
+test_elsif
+BRK
+
+@test_elsif_res $2
+@test_elsif_n $2
+
+@test_elsif
+#000a ;test_elsif_n STA2 ( scalar )
+;test_elsif_n ( ARG by REF )
+;test_elsif_res ( ARG by REF )
+test
+
+POP2r BRK ( MAIN )
+( LIBRARY ROUTINES )
+( ==== test ==== )
+@test_res $2
+@test_n $2
+@test
+;test_res STA2
+;test_n STA2
+
+
+;test_res LDA2 LDA2 #0005 EQU2 ?&b41
+!&b41_e
+&b41
+;test_res LDA2 LDA2 #0004 SUB2 ;test_res LDA2 STA2 ( scalar )
+!&c_e41
+&b41_e
+;test_res LDA2 LDA2 #0002 EQU2 ?&b43
+!&b43_e
+&b43
+;test_res LDA2 LDA2 #0001 SUB2 ;test_res LDA2 STA2 ( scalar )
+!&c_e41
+&b43_e
+;test_res LDA2 LDA2 #0003 EQU2 ?&b45
+!&b45_e
+&b45
+;test_res LDA2 LDA2 #0002 SUB2 ;test_res LDA2 STA2 ( scalar )
+!&c_e41
+&b45_e
+
+;test_res LDA2 LDA2 #0003 SUB2 ;test_res LDA2 STA2 ( scalar )
+!&c_e41
+
+ &c_e41
+;test_res LDA2 LDA2 NIP #30 ADD #18 DEO #0a18 DEO
+JMP2r

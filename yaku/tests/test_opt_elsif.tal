@@ -1,0 +1,281 @@
+ |00 @System  $2  $2  $1  $1  $2  $2  $2  $2  $1 &state $1
+|0100
+test_elsif
+( #80 .System/state DEO )
+BRK
+@test_elsif_res $2
+@test_elsif_n $2
+@test_elsif
+#000a ;test_elsif_n STA2 ( scalar )
+;test_elsif_n ( ARG by REF )
+;test_elsif_res ( ARG by REF )
+test
+;test_elsif_res LDA2 print-int #2018 DEO ( , ) #0a18 DEO
+POP2r exit BRK ( MAIN )
+( LIBRARY ROUTINES )
+( ==== test ==== )
+@test_res $2
+@test_n $2
+@test
+;test_res STA2
+;test_n STA2
+{ 0007 "Stage 20 30 } STH2r print-string #2018 DEO ( , ) #0a18 DEO
+;test_n LDA2 LDA2 #0001 lte2 ?&b9
+!&b9_e
+&b9
+;test_res LDA2 LDA2 #0001 ADD2 ;test_res LDA2 STA2 ( scalar )
+!&c_e9
+&b9_e
+
+;test_res LDA2 LDA2 #0001 SUB2 ;test_res LDA2 STA2 ( scalar )
+!&c_e9
+
+ &c_e9
+{ 0007 "Stage 20 31 } STH2r print-string #2018 DEO ( , ) #0a18 DEO
+#0002 ;test_res LDA2 STA2 ( scalar )
+{ 0007 "Stage 20 32 } STH2r print-string #2018 DEO ( , ) #0a18 DEO
+;test_res LDA2 LDA2 #0002 EQU2 ?&b19
+!&b19_e
+&b19
+#0001 ;test_n LDA2 STA2 ( scalar )
+!&c_e19
+&b19_e
+
+;test_n LDA2 LDA2 #0001 SUB2 ;test_n LDA2 STA2 ( scalar )
+!&c_e19
+
+ &c_e19
+{ 0007 "Stage 20 33 } STH2r print-string #2018 DEO ( , ) #0a18 DEO
+{ 0005 "Error } STH2r print-string #2018 DEO ( , ) #0a18 DEO
+{ 000f "Four-way 20 "branch } STH2r print-string #2018 DEO ( , ) #0a18 DEO
+;test_res LDA2 LDA2 #0005 EQU2 ?&b41
+!&b41_e
+&b41
+;test_res LDA2 LDA2 #0004 SUB2 ;test_res LDA2 STA2 ( scalar )
+!&c_e41
+&b41_e
+;test_res LDA2 LDA2 #0002 EQU2 ?&b43
+!&b43_e
+&b43
+;test_res LDA2 LDA2 #0001 SUB2 ;test_res LDA2 STA2 ( scalar )
+!&c_e41
+&b43_e
+;test_res LDA2 LDA2 #0003 EQU2 ?&b45
+!&b45_e
+&b45
+;test_res LDA2 LDA2 #0002 SUB2 ;test_res LDA2 STA2 ( scalar )
+!&c_e41
+&b45_e
+
+;test_res LDA2 LDA2 #0003 SUB2 ;test_res LDA2 STA2 ( scalar )
+!&c_e41
+
+ &c_e41
+{ 000b "End 20 "of 20 "test } STH2r print-string #2018 DEO ( , ) #0a18 DEO
+JMP2r
+@exit
+( POP2 )
+#80 .System/state DEO
+POP2r
+BRK
+
+@fmt-dec-short
+DUP2
+n-dec-digits-in-short
+DUP
+#01
+EQU
+?&done
+,&n-dig
+STR
+#01
+&loop
+ROT
+ROT
+DUP2
+#000a
+DIV2
+DUP2
+#000a
+MUL2
+ROT2
+SWP2
+SUB2
+NIP
+#30
+ADD
+ROT
+ROT
+SWP2
+SWP
+SWP2
+ROT
+INC
+DUP
+LIT
+&n-dig
+$1
+LTH
+?&loop
+&done
+ROT
+ROT
+NIP
+#30
+ADD
+SWP
+JMP2r
+
+@gt2
+GTH2k
+STH
+OVR2
+OVR2
+#8000
+LTH2
+STH
+ANDr
+#8000
+LTH2
+STHr
+AND
+,&pop
+JCN
+GTH2k
+STH
+OVR2
+OVR2
+#7fff
+GTH2
+STH
+ANDr
+#7fff
+GTH2
+STHr
+AND
+,&pop
+JCN
+#7fff
+GTH2
+ROT
+ROT
+#8000
+LTH2
+AND
+,&true
+JCN
+#00
+JMP2r
+&pop
+POP2
+POP2
+&true
+#01
+JMP2r
+
+@lte2
+gt2
+#01
+SWP
+SUB
+JMP2r
+
+@n-dec-digits-in-short
+DUP2
+#0000
+EQU2
+?&is_zero
+#2710
+#0005
+&loop
+ROT2
+ROT2
+DIV2k
+#0000
+NEQ2
+?&done_loop
+#000a
+DIV2
+ROT2
+#0001
+SUB2
+!&loop
+&is_zero
+#01
+JMP2r
+&done_loop
+POP2
+POP2
+NIP
+JMP2r
+
+@print-int
+DUP2
+#0000
+EQU2
+?&zero
+fmt-dec-short
+{
+#18
+DEO
+JMP2r
+}
+STH2r
+!proc-n-items-from-ws
+&zero
+POP2
+#3018
+DEO
+JMP2r
+
+@print-string
+#18
+!write-string
+
+@proc-n-items-from-ws
+ROT
+STHk
+&loop
+#00
+EQU
+?&end
+STH2k
+JSR2
+STH2r
+STHr
+#01
+SUB
+STHk
+!&loop
+&end
+POPr
+POP2
+JMP2r
+
+@write-string
+STH
+DUP2
+LDA2
+SWP2
+INC2
+INC2
+DUP2
+ROT2
+ADD2
+SWP2
+&l
+LDAk
+STHrk
+DEO
+INC2
+GTH2k
+?&l
+POP2
+POP2
+POPr
+JMP2r
+( Parameters )
+@test_VV #00 JMP2r
+@test_ERR #01 JMP2r
+( Module Globals )
+@totalMemUsage 0000

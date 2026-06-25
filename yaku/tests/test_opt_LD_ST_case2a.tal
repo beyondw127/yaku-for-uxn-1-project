@@ -1,0 +1,13 @@
+( Case 2. $a ST$ma OP $a LD$ma COM_BINOP => OP COM_BINOP )
+|0100
+#02 #04 test_opt_LD_ST_case2a
+BRK
+
+@test_opt_LD_ST_case2a
+,&x STR INC ,&x LDR ADD ,&res STR
+,&res LDR
+JMP2r
+&x $1 &res $1
+
+
+

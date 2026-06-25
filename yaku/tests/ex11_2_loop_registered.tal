@@ -1,0 +1,59 @@
+( This is an example of an Uxntal program that needs a phi function to implement a loop in SSA )
+( It uses a  library print function to print out shorts as decimal values )
+|0000
+|0100 @main
+
+  #0010 ;loop JSR2
+  ( ;print16-dec JSR2 
+  ;nl JSR2 )
+BRK
+ 
+@loop
+    ,&r1 STR2 
+    #0000 ,&r2 STR2
+    &For ( so after on iteration we have r1 r2 here, so the #0000 should become r2 )
+    ( but that means that somewhere we should set r2 to #0000 )
+    ( my hunch is that I can do this just before the label )
+    ,&r1 LDR2 ,&r2 LDR2 INC2 ,&r2 STR2 ( r1 r2 )
+    ( r1 r2 r2 )
+    ( because the print function removes the item from the stack )
+    ,&r2 LDR2 ;print16-dec JSR2 ( r1 r2 r1 r2 )
+    ;nl JSR2
+    ,&r1 LDR2 ,&r2 LDR2 NEQ2 ,&r3 STR ( r1 r2 r3 )
+    ,&r3 LDR ,&For JCN ( r1 r2 )    
+    ( r2 ; this should be returned so )
+    ,&r2 LDR2 
+    JMP2r
+    &r1 $2 &r2 $2 &r3 $2 
+
+( ~../common-libs/print.tal )
+@nl 
+    #0a #18 DEO
+    JMP2r
+
+@print16-dec
+    DUP2 ( x:16 x:16 )
+    ( T = x/10000 )
+    #2710 DIV2 ( x:16 T:16 ) DUP #30 ADD #18 DEO
+    ( Dt = x - 10000*T )
+    #2710 MUL2 SUB2 ( Dt )
+    
+    DUP2 ( Dt Dt )
+    ( D = Dt / 1000 )
+    #03e8 DIV2 ( Dt D ) DUP #30 ADD #18 DEO
+    ( ht = Dt-D*1000 )
+    #03e8 MUL2 SUB2  ( ht )
+    
+    DUP2 ( ht ht )
+    ( h = ht /100 )
+    #0064 DIV2 ( ht h ) DUP #30 ADD #18 DEO
+    ( tt = ht - h*100 )
+    #0064 MUL2 SUB2 ( tt )
+    
+    DUP2 ( tt tt )
+    ( t = tt / 10 )
+    #000a DIV2 ( tt t ) DUP #30 ADD #18 DEO
+    ( e = tt - 10*t )
+    #000a MUL2 SUB2 ( e ) #30 ADD #18 DEO POP
+    
+    JMP2r

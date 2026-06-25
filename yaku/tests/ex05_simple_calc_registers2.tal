@@ -1,0 +1,16 @@
+|0000
+@x1 $2
+@x2 $2
+|0100
+( store 6 in register x )
+#0006 .x1 STZ2
+( load 6 from x1, increment and store 7 in x2 )
+.x1 LDZ2 INC2 .x2 STZ2
+
+( load 6 from x1, load 7 from x2, multiply both )
+.x1 LDZ2 
+.x2 LDZ2
+MUL2 
+#18 DEO ( prints '*' )
+
+BRK

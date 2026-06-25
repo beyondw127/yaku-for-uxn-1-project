@@ -1,0 +1,16 @@
+( factorial with fixed-point, args stored inside the lambda, self-modifying code )
+
+|0100
+    #05 fact-fix
+    #18 DEO ( prints 'x', ASCII 120 )
+BRK
+@fact-fix
+    { 
+        ,&f STR2 DUP ,&n STR
+        #01 NEQ ?{ #01 JMP2r }
+        LIT &n $1 STHk
+        #01 SUB LIT2 &f $2 DUP2 JSR2 
+        STHr DUP ,&n STR MUL
+        JMP2r
+    } STH2r DUP2 JSR2
+JMP2r

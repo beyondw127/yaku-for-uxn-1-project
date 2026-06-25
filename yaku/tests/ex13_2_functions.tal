@@ -1,0 +1,19 @@
+( to debug stack underflow on NIP )
+|0100 @main
+
+#0002 #0003 #0006 #0005 ;quadratic JSR2
+NIP #18 DEO 
+BRK
+
+@quadratic 
+    MUL2
+    ;sum JMP2       
+
+@sum 
+    ADD2
+    ADD2
+    JMP2r
+
+
+
+

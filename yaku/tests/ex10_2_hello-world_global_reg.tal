@@ -1,0 +1,20 @@
+
+|0100
+;hi
+#01 #01 SUB 
+( ,&r1 STR )
+;hello 
+( ;rrx STA2 )
+@main/while
+( ;rrx LDA2 )
+LDA #18 DEO
+;main/while JCN2
+
+BRK
+@rrx $2
+
+@hello
+"hello
+
+@hi
+"hi!

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yaku - UXN Assembler & Interpreter</title>
+    <link rel="stylesheet" href="yaku.css">
+    <link rel="icon" href="yaku.png">
+
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <!-- <h1>役 Yaku</h1>  WV was 🗾 -->
+                <p class="subtitle"><b>役 Yaku</b> &mdash; Uxn Assembler & Interpreter</p>
+            </div>
+            <div class="version">v1.0.0</div>
+        </header>
+
+        <main class="main-content">
+            <section class="editor-section">
+                <div class="section-header">
+                    <h2>📝 Uxntal Code Editor</h2>
+                    <div class="file-controls">
+                        <input type="file" id="file-input" accept=".tal,.txt" style="display: none;">
+                        <button id="load-file-btn" class="btn btn-secondary">📁 Load File</button>
+                        <button id="save-file-btn" class="btn btn-secondary">💾 Save</button>
+                        <select id="example-select" class="example-selector">
+                            <option value="">Select Example...</option>
+                            <option value="hello-world">0. Hello World (I)</option>
+                            <option value="stack">1. Stack</option>
+                            <option value="numbers">2. Numbers</option>
+                            <option value="functions">3. Functions</option>
+                            <option value="variables">4. Variables</option>
+                            <option value="if-else">5. If/else</option>
+                            <option value="loop">6. Loop</option>
+                            <option value="enums---structs">7. Enums & Structs</option>
+                            <option value="macros">8. Macros</option>
+                            <option value="objects">9. Objects</option>
+                            <option value="debugging">10. Debugging</option>
+                            <option value="hello-world-2">11. Hello World (II)</option>
+                            <option value="simple-calc">12. Simple Calculation</option>
+                            <option value="fibonacci">13. Fibonacci</option>
+                            <option value="memory-access">14. Memory Access</option>
+
+                        </select>
+                    </div>
+                </div>
+                <div class="editor-container">
+                    <textarea id="code-editor" class="code-editor" placeholder="Enter your Uxntal code here...">|0100
+
+@main
+    #2a #18 DEO
+    BRK</textarea>
+                </div>
+            </section>
+
+            <section class="controls-section">
+                <div class="section-header">
+                    <h2>⚙️ Controls</h2>
+                </div>
+                <div class="control-panel">
+                    <div class="control-group">
+                        <h3>ASSEMBLY OPTIONS</h3>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="option-assemble" >
+                            Assemble (-a)
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="option-run" checked>
+                            Run (-r)
+                        </label>
+                        <!-- <label class="checkbox-label">
+                            <input type="checkbox" id="option-print">
+                            Print Code (-p)
+                        </label> -->
+                    </div>
+                    
+                    <div class="control-group">
+                        <h3>DEBUG OPTIONS</h3>
+                        <!-- <label class="checkbox-label">
+                            <input type="checkbox" id="option-verbose">
+                            Verbose (-V)
+                        </label> -->
+                        <!-- <label class="checkbox-label">
+                            <input type="checkbox" id="option-show-stacks">
+                            Show Stacks (-s)
+                        </label> -->
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="option-warnings">
+                            Fewer Warnings (-W)
+                        </label>
+                    </div>
+
+                    <div class="control-group">
+                        <h3>ACTIONS</h3>
+                        <button id="execute-btn" class="btn btn-primary">▶️ Execute</button>
+                        <button id="clear-output" class="btn btn-secondary">🗑️ Clear Output</button>
+                        <button id="download-rom" class="btn btn-secondary" style="display: none;">⬇️ Download ROM</button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="output-section">
+                <div class="section-header">
+                    <h2>📤 Output</h2>
+                    <!-- <div class="output-tabs">
+                        <button class="tab-btn active" data-tab="console">Console</button>
+                        <button class="tab-btn" data-tab="assembly">Assembly</button>
+                        <button class="tab-btn" data-tab="memory">Memory</button>
+                    </div> -->
+                </div>
+                <div class="output-container">
+                    <div id="console-output" class="output-pane active">
+                        <pre class="output-content">Ready to execute Uxntal code...</pre>
+                    </div>
+                    <!-- <div id="assembly-output" class="output-pane">
+                        <pre class="output-content">Assembly output will appear here...</pre>
+                    </div>
+                    <div id="memory-output" class="output-pane">
+                        <pre class="output-content">Memory dump will appear here...</pre>
+                    </div> -->
+       
+                </div>
+            </section>
+      
+            <section class="stack-section">
+                <div class="section-header">
+                    <h2>📝 Uxn Stacks</h2>
+                </div>
+                <div class="output-container">
+                    <div id="stacks-output" class="output-pane active">
+                        <pre class="output-content">&nbsp;</pre>
+                    </div>
+                </div>
+            </section>
+
+       
+        </main>
+        <footer class="footer">&copy; Jiarong Xu and Wim Vanderbauwhede, 2025</footer>
+    </div>
+
+    <script src="app.js" type="module"></script>
+</body>
+</html>
