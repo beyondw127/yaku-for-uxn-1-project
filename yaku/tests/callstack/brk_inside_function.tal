@@ -1,0 +1,30 @@
+( ============================================================
+  Call-stack trace test #1: BRK INSIDE a nested function.
+
+  Call chain:  main -> outer -> inner
+  The BRK (our breakpoint) sits INSIDE `inner`, before it returns.
+
+  Expected LIVE call stack at the BRK:   MAIN, outer, inner
+  Expected working-stack value at BRK:    0006   ( 2 +1 +3 )
+
+  Why this matters:
+  A BRK at the end of main would show only [MAIN], because by then
+  outer and inner have already returned. Putting the BRK *inside*
+  inner is what makes the call path visible -- exactly like setting
+  a gdb breakpoint deep in the call chain and typing `bt`.
+  ============================================================ )
+
+|0100 @main
+    #0002 ;outer JSR2     ( call outer with n = 2 )
+    #18 DEO               ( never reached: BRK in inner halts first )
+    BRK
+
+@outer ( n -- n2 )
+    #0001 ADD2            ( n + 1 )
+    ;inner JSR2           ( call inner )
+    JMP2r
+
+@inner ( n -- n2 )
+    #0003 ADD2            ( n + 3 )
+    BRK                   ( <-- breakpoint deep in the call chain )
+    JMP2r
