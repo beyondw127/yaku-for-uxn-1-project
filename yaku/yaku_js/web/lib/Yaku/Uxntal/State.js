@@ -23,6 +23,7 @@ export function initYakuState(hasMain, supportPaging,forWeb) {
         // free  :  0,
         lambdaStack : [],
         lambdaCount : 0,
+        callStack : [],                 // ← 新增：解释器级别的调用栈
         hasMain : hasMain,
         // dev : [],
         supportPaging : supportPaging,

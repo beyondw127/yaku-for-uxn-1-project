@@ -57,7 +57,8 @@ export function runProgram(yakuState) {
     yakuState.Uxn.pc = 0x100; // All programs must start at 0x100
     const word_sz = 1; // Default word size
     let current_parent = 'MAIN';
-    const call_stack = ['MAIN'];
+    yakuState.callStack = ['MAIN'];          // 本子现在放进档案柜（yakuState）里
+    const call_stack = yakuState.callStack;  // call_stack 只是同一个本子的"别名"
     
     while (true) {
         if (yakuState.Uxn.pc > 0xffff) {
