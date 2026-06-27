@@ -174,6 +174,7 @@ export function mainForWeb(programFile,programText, opts) { // async
     yakuState.webState.warningsBuffer='';
     yakuState.webState.outputBuffer='';
     yakuState.Uxn.stacks = [[], []];
+    let tokens; 
     try {    
         // 解析Uxntal程序 - 对应 my ($tokensWithoutIdx,$lineIdxs,$uxn) = parseUxntalProgram($programFile,$initialUxn);
         [tokens, yakuState] = parseUxntalProgram(programText, programFile, yakuState, false);
