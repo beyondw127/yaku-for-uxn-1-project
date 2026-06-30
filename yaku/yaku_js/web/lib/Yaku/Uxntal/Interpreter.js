@@ -88,9 +88,11 @@ export function runProgram(yakuState) {
                 }
             }
             // Handle call stack tracking for jumps and calls
-            if (token[1] === 'JSR' && token[2] === 2 && token[3] === 0) { // JSR2
-                if (yakuState.reverseSymbolTable.hasOwnProperty(yakuState.Uxn.pc - 3)) {
-                    current_parent = prettyPrintToken(yakuState.reverseSymbolTable[yakuState.Uxn.pc - 3][0]);
+            if (token[1] === 'JSR' && token[3] === 0) { // JSR（短模式 JSR2 + 字节模式 JSR 都算）
+                // 短模式(JSR2)：地址字面量在 pc-3；字节模式(JSR)：在 pc-2
+                const ref_addr = (token[2] === 2) ? yakuState.Uxn.pc - 3 : yakuState.Uxn.pc - 2;
+                if (yakuState.reverseSymbolTable.hasOwnProperty(ref_addr)) {
+                    current_parent = prettyPrintToken(yakuState.reverseSymbolTable[ref_addr][0]);
                     call_stack.push(current_parent);
                 } else {
                     current_parent = '<lambda>';
