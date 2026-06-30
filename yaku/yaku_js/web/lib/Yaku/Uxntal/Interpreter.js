@@ -57,7 +57,7 @@ export function runProgram(yakuState) {
     yakuState.Uxn.pc = 0x100; // All programs must start at 0x100
     const word_sz = 1; // Default word size
     let current_parent = 'MAIN';
-    yakuState.callStack = ['MAIN'];          // 本子现在放进档案柜（yakuState）里
+    yakuState.callStack = [{ functionName: 'MAIN' }];          // 本子现在放进档案柜（yakuState）里
     const call_stack = yakuState.callStack;  // call_stack 只是同一个本子的"别名"
     
     while (true) {
@@ -93,15 +93,15 @@ export function runProgram(yakuState) {
                 const ref_addr = (token[2] === 2) ? yakuState.Uxn.pc - 3 : yakuState.Uxn.pc - 2;
                 if (yakuState.reverseSymbolTable.hasOwnProperty(ref_addr)) {
                     current_parent = prettyPrintToken(yakuState.reverseSymbolTable[ref_addr][0]);
-                    call_stack.push(current_parent);
+                    call_stack.push({ functionName: current_parent.replace(/^[@&]/, '') });
                 } else {
                     current_parent = '<lambda>';
-                    call_stack.push(current_parent);
+                    call_stack.push({ functionName: current_parent.replace(/^[@&]/, '') });
                 }
             } else if (token[1] === 'JSI') { // JSI
                 if (yakuState.reverseSymbolTable.hasOwnProperty(yakuState.Uxn.pc + 1)) {
                     current_parent = prettyPrintToken(yakuState.reverseSymbolTable[yakuState.Uxn.pc + 1][0]);
-                    call_stack.push(current_parent);
+                    call_stack.push({ functionName: current_parent.replace(/^[@&]/, '') });
                 }
             } else if (token[1] === 'JMP' && token[2] === 2 && token[3] === 0) { // JMP2
                 if (yakuState.reverseSymbolTable.hasOwnProperty(yakuState.Uxn.pc - 3)) {
@@ -117,7 +117,7 @@ export function runProgram(yakuState) {
             if (token[1] === 'JMP' && token[2] === 2 && token[3] === 1) { // JMP2r
                 call_stack.pop();
                 if (call_stack.length>0){
-                    current_parent = call_stack[call_stack.length - 1];
+                    current_parent = call_stack[call_stack.length - 1].functionName;
                 } else {
                     current_parent = 'MAIN';
                 }
@@ -126,7 +126,7 @@ export function runProgram(yakuState) {
                 if (prev_token && prev_token[1] === 'STH' && prev_token[2] === 2 && prev_token[3] === 1) {
                     call_stack.pop();
                     if (call_stack.length>0){
-                        current_parent = call_stack[call_stack.length - 1];
+                        current_parent = call_stack[call_stack.length - 1].functionName;
                     } else {
                         current_parent = 'MAIN';
                     }
@@ -154,7 +154,7 @@ export function runProgram(yakuState) {
 function executeInstr(token, yakuState, current_parent) {
     const [, instr, sz, rs, keep] = token;
     // 修复BRK指令处理 - 正常退出而不是抛出异常
-    if (instr === 'BRK') {        
+    if (instr === 'BRK') {      
         if (VV === 1) {            
             console.log('\n*** DONE *** ');
         } else {
