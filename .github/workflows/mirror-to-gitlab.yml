@@ -1,0 +1,47 @@
+name: Mirror GitHub to University GitLab
+
+on:
+  push:
+    branches:
+      - "**"
+    tags:
+      - "**"
+  delete:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mirror-to-university-gitlab
+  cancel-in-progress: true
+
+jobs:
+  mirror:
+    name: Sync repository to University GitLab
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Clone GitHub repository as a mirror
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          git clone --mirror \
+            "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
+            repository.git
+
+      - name: Push branches and tags to University GitLab
+        env:
+          GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          cd repository.git
+
+          git push --prune \
+            "https://3077364W:${GITLAB_TOKEN}@stgit.dcs.gla.ac.uk/3077364W/yaku-for-uxn-1-project.git" \
+            "+refs/heads/*:refs/heads/*" \
+            "+refs/tags/*:refs/tags/*"
